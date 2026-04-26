@@ -1,0 +1,12 @@
+# 128-qubit climate sensor anomaly encoding using sparse/sharded execution.
+simulate(128, engine="sharded", n_shards=16, workers=4, use_lookup=true) {
+    q = quantum_register(128)
+    X(q[3])
+    X(q[41])
+    X(q[90])
+    H(q[0])
+    CNOT(q[0], q[3])
+    Rz(q[41], PI / 8)
+    print("climate nnz", engine_nnz())
+    print(lookup_profile())
+}

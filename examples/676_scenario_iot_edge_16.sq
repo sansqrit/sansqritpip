@@ -1,0 +1,13 @@
+# Scenario 376: IoT edge fleet anomaly grouping: scenario 16
+# Strategy: 10-qubit dense local blocks with safe MPS promotion for bridge gates.
+simulate(122, engine="hierarchical", block_size=10, max_bond_dim=null, cutoff=0.0, use_lookup=true) {
+    q = quantum_register(122)
+    block_A = shard("block_A", 0, 9)
+    block_B = shard("block_B", 10, 19)
+    apply_block("H", block_A)
+    apply_block("X", block_B)
+    CNOT(q[9], q[10])
+    Rz(q[11], PI / 7)
+    print("scenario", "iot_edge", hierarchical_report())
+    print("lookup", lookup_profile())
+}

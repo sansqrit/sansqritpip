@@ -1,0 +1,5 @@
+let code = qec_code("repetition", distance=5)
+let l = qec_logical("repetition", base=0, distance=5)
+let stabs = l.stabilizers()
+let sx = l.logical_x_term()
+let sz = l.logical_z_term()

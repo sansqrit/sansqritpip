@@ -1,0 +1,10 @@
+# 150-qubit sparse robot path flags.
+simulate(150, engine="sharded", n_shards=15, workers=4) {
+    q = quantum_register(150)
+    X(q[12])
+    X(q[77])
+    X(q[149])
+    H(q[2])
+    CNOT(q[2], q[12])
+    print("robotics", engine_nnz())
+}

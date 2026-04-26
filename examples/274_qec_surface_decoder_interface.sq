@@ -1,0 +1,3 @@
+let code = qec_code("surface", distance=3)
+let l = qec_logical("surface", distance=3)
+let ops = qec_syndrome_circuit(l, ancilla_base=9)

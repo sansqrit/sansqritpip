@@ -5,6 +5,8 @@ qiskit>=1
 cirq-core>=1.4
 amazon-braket-sdk>=1.80
 pennylane>=0.40
+stim>=1.13
+pymatching>=2.1
 
 [braket]
 amazon-braket-sdk>=1.80
@@ -28,6 +30,10 @@ pennylane>=0.40
 
 [pennylane]
 pennylane>=0.40
+
+[qec]
+stim>=1.13
+pymatching>=2.1
 
 [qiskit]
 qiskit>=1

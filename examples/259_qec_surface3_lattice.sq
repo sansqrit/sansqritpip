@@ -1,0 +1,5 @@
+let lattice = qec_surface_lattice(3)
+let data = lattice.data_qubits
+let xchecks = lattice.x_checks
+let zchecks = lattice.z_checks
+let stabs = lattice.stabilizers()

@@ -1,5 +1,39 @@
 # Changelog
 
+## 0.3.2 - QEC framework release
+
+Author/maintainer metadata set to **Karthik V**.
+
+Added:
+
+- Dedicated `sansqrit.qec` module.
+- QEC code registry: bit-flip, phase-flip, repetition, Shor 9, Steane 7, five-qubit perfect code, and surface-code helper layouts.
+- `LogicalQubit` abstraction.
+- Stabilizer syndrome extraction circuit generation.
+- Syndrome measurement and correction pipeline.
+- Decoder interface with repetition, lookup, and educational surface-code decoders.
+- Logical gate helpers: logical X/Z/H/S/CNOT.
+- QEC DSL runtime functions.
+- Backend planner and lookup profile helper modules.
+- QEC docs and examples.
+
+Notes:
+
+- The surface-code decoder is educational and interface-compatible, not a high-performance MWPM decoder.
+- Dense arbitrary 120+ qubit simulation remains infeasible; use stabilizer/MPS/sparse-sharded planning.
+
+
+## 0.4.0
+
+- Added packaged precomputed lookup data under `sansqrit/data/`.
+- Added static single-qubit 2x2 matrix JSON tables.
+- Added static two-qubit 4x4 matrix JSON tables.
+- Added gzipped embedded full-register transition tables for all static single-qubit gates on 1..10 qubits and every target position.
+- Updated the sparse engine middle layer to use embedded lookup tables before arithmetic fallback.
+- Added documentation and tests for packaged lookup files.
+
+# Changelog
+
 ## 0.3.0
 
 - Expanded the package README into a complete tutorial and reference.

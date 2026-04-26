@@ -1,0 +1,9 @@
+# 150-qubit sparse program: primitive gate lookup + sparse runtime transitions.
+# Full embedded transition tables are intentionally capped at 10 qubits.
+simulate(150) {
+  let q = quantum_register(150)
+  X(q[149])
+  H(q[0])
+  CNOT(q[0], q[149])
+  let p = probabilities(q)
+}

@@ -1,0 +1,4 @@
+let code = qec_code("surface", distance=3)
+let l = qec_logical("surface", base=0, distance=3)
+let stabs = l.stabilizers()
+let circuit = qec_syndrome_circuit(l, ancilla_base=9)

@@ -1,0 +1,15 @@
+# Scenario 407: Post-quantum cryptography migration audit: scenario 07
+# Strategy: sparse + sharded execution for 154 logical qubits.
+simulate(154, engine="sharded", n_shards=15, workers=4, use_lookup=true) {
+    q = quantum_register(154)
+    X(q[107])
+    X(q[4])
+    X(q[25])
+    H(q[147])
+    CNOT(q[147], q[54])
+    Rz(q[147], PI / 6)
+    CZ(q[54], q[81])
+    print("scenario", "pqc_migration", "nnz", engine_nnz())
+    print("lookup", lookup_profile())
+    print("estimate", estimate_qubits(154))
+}

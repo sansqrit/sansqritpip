@@ -143,8 +143,8 @@ def write_csv(path: str, rows: list[dict[str, Any]]) -> None:
 class simulate(AbstractContextManager):
     def __init__(self, n_qubits: int | None = None, *, engine: str = "sparse", backend: str | None = None,
                  qubits: int | None = None, n_shards: int = 1, workers: int = 1,
-                 seed: int | None = None, use_lookup: bool = True, max_bond_dim: int | None = 128,
-                 cutoff: float = 1e-12, addresses: list | None = None):
+                 seed: int | None = None, use_lookup: bool = True, max_bond_dim: int | None = None,
+                 cutoff: float = 0.0, addresses: list | None = None, block_size: int = 10):
         self.n_qubits = n_qubits or qubits or 1
         self.backend = backend or engine
         self.n_shards = n_shards
@@ -154,6 +154,7 @@ class simulate(AbstractContextManager):
         self.max_bond_dim = max_bond_dim
         self.cutoff = cutoff
         self.addresses = addresses
+        self.block_size = block_size
         self.engine_obj = None
         self.previous: QuantumEngine | None = None
 
@@ -162,7 +163,8 @@ class simulate(AbstractContextManager):
         self.previous = _current_engine
         self.engine_obj = QuantumEngine.create(self.n_qubits, backend=self.backend, n_shards=self.n_shards,
                                                workers=self.workers, use_lookup=self.use_lookup, seed=self.seed,
-                                               max_bond_dim=self.max_bond_dim, cutoff=self.cutoff, addresses=self.addresses)
+                                               max_bond_dim=self.max_bond_dim, cutoff=self.cutoff, addresses=self.addresses,
+                                               block_size=self.block_size)
         _current_engine = self.engine_obj
         _last_engine = self.engine_obj
         return self.engine_obj
@@ -265,7 +267,38 @@ def export_qasm3(path: str | None = None):
     if path: write_file(path, text)
     return text
 
-def shards(): return [s.__dict__ for s in current_engine().shard_info()]
+def shards():
+    info = current_engine().shard_info()
+    out = []
+    for s in info:
+        out.append(s if isinstance(s, dict) else s.__dict__)
+    return out
+
+
+class ShardMapping:
+    def __init__(self, name: str, start: int, end: int):
+        self.name = name
+        self.start = int(start)
+        self.end = int(end)
+    def __iter__(self):
+        return iter(range(self.start, self.end + 1))
+    def __len__(self):
+        return self.end - self.start + 1
+    def __repr__(self):
+        return f"ShardMapping({self.name!r}, {self.start}..{self.end})"
+
+def shard(name: str, start: int, end: int):
+    return ShardMapping(name, start, end)
+
+def apply_block(gate: str, block: ShardMapping, *params):
+    for q in block:
+        current_engine().apply(gate, q, params=tuple(float(p) for p in params))
+
+def hierarchical_report():
+    engine = current_engine()
+    if hasattr(engine, "hierarchical_report"):
+        return engine.hierarchical_report()
+    return {"backend": type(engine).__name__, "hierarchical": False}
 
 
 def noise_depolarize(q, p):
@@ -345,3 +378,177 @@ def make_globals() -> dict[str, Any]:
         "true": True, "false": False, "None": None,
     })
     return env
+
+# QEC helpers exposed to DSL --------------------------------------------------
+def qec_code(name: str, distance: int | None = None):
+    from .qec import get_code
+    return get_code(name, distance=distance)
+
+def qec_codes():
+    from .qec import list_codes
+    return list_codes()
+
+def qec_logical(code: str = "bit_flip", base: int = 0, name: str = "logical", distance: int | None = None):
+    from .qec import logical_qubit
+    return logical_qubit(code, base=base, name=name, distance=distance)
+
+def qec_encode(logical):
+    from .qec import encode
+    return encode(current_engine(), logical)
+
+def qec_decode(logical):
+    from .qec import decode
+    return decode(current_engine(), logical)
+
+def qec_syndrome(logical, ancilla_base: int | None = None):
+    from .qec import measure_syndrome
+    return measure_syndrome(current_engine(), logical, ancilla_base=ancilla_base)
+
+def qec_correct(logical, syndrome):
+    from .qec import correct
+    return correct(current_engine(), logical, syndrome)
+
+def qec_syndrome_and_correct(logical, ancilla_base: int | None = None):
+    from .qec import syndrome_and_correct
+    return syndrome_and_correct(current_engine(), logical, ancilla_base=ancilla_base)
+
+def qec_inject_error(logical, pauli: str, physical_offset: int):
+    from .qec import inject_error
+    return inject_error(current_engine(), logical, pauli, physical_offset)
+
+def logical_x(logical):
+    from .qec import logical_x as _logical_x
+    return _logical_x(current_engine(), logical)
+
+def logical_z(logical):
+    from .qec import logical_z as _logical_z
+    return _logical_z(current_engine(), logical)
+
+def logical_h(logical):
+    from .qec import logical_h as _logical_h
+    return _logical_h(current_engine(), logical)
+
+def logical_s(logical):
+    from .qec import logical_s as _logical_s
+    return _logical_s(current_engine(), logical)
+
+def logical_cx(control, target):
+    from .qec import logical_cnot
+    return logical_cnot(current_engine(), control, target)
+
+def qec_surface_lattice(distance: int = 3):
+    from .qec import SurfaceCodeLattice
+    return SurfaceCodeLattice(distance)
+
+def qec_syndrome_circuit(logical, ancilla_base: int | None = None):
+    from .qec import syndrome_circuit
+    return syndrome_circuit(logical, ancilla_base=ancilla_base)
+
+def lookup_profile():
+    engine = current_engine()
+    if hasattr(engine, "lookup_report"):
+        return engine.lookup_report()
+    return {"backend": type(engine).__name__, "lookup_profile": "not supported"}
+
+def plan_backend(circuit_or_n_qubits, operations=None):
+    from .planner import analyze_operations
+    if hasattr(circuit_or_n_qubits, "operations"):
+        return analyze_operations(circuit_or_n_qubits.n_qubits, circuit_or_n_qubits.operations).to_dict()
+    return analyze_operations(int(circuit_or_n_qubits), operations or []).to_dict()
+
+# Architecture, hardware, diagnostics and AI-training helpers -----------------
+def sansqrit_doctor():
+    from .diagnostics import doctor
+    return doctor()
+
+def sansqrit_backends():
+    from .diagnostics import backends
+    return [b.to_dict() for b in backends()]
+
+def estimate_qubits(n_qubits: int):
+    from .diagnostics import estimate
+    return estimate(int(n_qubits))
+
+def execution_flow():
+    from .architecture import execution_flow_mermaid
+    return execution_flow_mermaid()
+
+def architecture_layers():
+    from .architecture import architecture_layers as _layers
+    return _layers()
+
+def lookup_architecture():
+    from .architecture import lookup_architecture as _lookup_architecture
+    return _lookup_architecture()
+
+def explain_120_qubits_dense():
+    from .architecture import explain_120_qubits_dense as _explain
+    return _explain()
+
+def hardware_targets():
+    from .hardware import hardware_targets as _targets
+    return _targets()
+
+def export_hardware(provider: str = "openqasm3"):
+    from .hardware import export_for_hardware
+    return export_for_hardware(current_engine(), provider)
+
+def hardware_payload_summary():
+    from .hardware import hardware_payload_summary as _summary
+    return _summary(current_engine())
+
+def troubleshooting(topic: str | None = None):
+    from .diagnostics import troubleshoot
+    return troubleshoot(topic)
+
+def research_gaps():
+    from .research import research_gaps as _gaps
+    return _gaps()
+
+def write_training_jsonl(path: str):
+    from .dataset import generate_jsonl
+    return generate_jsonl(path)
+
+
+def training_dataset_info():
+    from .dataset import dataset_info
+    return dataset_info()
+
+def training_dataset_sample(split: str = "sft_train", n: int = 3):
+    from .dataset import sample_records
+    return sample_records(split, n)
+
+def export_training_dataset(output_dir: str, split: str | None = None, limit: int | None = None):
+    from .dataset import export_dataset
+    splits = [split] if split else None
+    return export_dataset(output_dir, splits=splits, limit=limit)
+
+def enable_logging(level: str = "INFO", path: str | None = None):
+    from .diagnostics import configure_logging
+    return configure_logging(level, path)
+
+def log_sansqrit_event(event: str, fields: dict | None = None):
+    from .diagnostics import log_event
+    return log_event(event, **(fields or {}))
+
+def qec_optional_features():
+    from .qec import qec_optional_features as _features
+    return _features()
+
+def qec_stim_syndrome_text(logical, ancilla_base: int | None = None):
+    from .qec import syndrome_circuit_as_stim_text
+    return syndrome_circuit_as_stim_text(logical, ancilla_base=ancilla_base)
+
+
+# Real-world scenario corpus helpers ------------------------------------------
+def real_world_scenarios_info():
+    from .scenarios import scenario_info
+    return scenario_info()
+
+def real_world_scenario_sample(n: int = 3, domain: str | None = None):
+    from .scenarios import sample_scenarios
+    return sample_scenarios(n, domain=domain)
+
+def export_real_world_scenarios(path: str, limit: int | None = None, domain: str | None = None):
+    from .scenarios import export_scenarios
+    return export_scenarios(path, limit=limit, domain=domain)

@@ -1,0 +1,3 @@
+let l = qec_logical("steane7", base=0)
+let circuit = qec_syndrome_circuit(l, ancilla_base=7)
+let code = qec_code("steane7")

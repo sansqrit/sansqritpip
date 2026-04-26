@@ -1,0 +1,12 @@
+# 120-qubit hierarchical tensor shards with a cross-block bridge.
+simulate(120, engine="hierarchical", block_size=10, max_bond_dim=null, cutoff=0.0) {
+    q = quantum_register(120)
+    shard block_A [0..9]
+    shard block_B [10..19]
+
+    H(q[9])
+    apply CNOT on q[9], q[10] bridge_mode=sparse
+    Z(q[10])
+
+    print(hierarchical_report())
+}

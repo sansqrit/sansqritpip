@@ -1,0 +1,10 @@
+# 1000-qubit Clifford city graph, safe for stabilizer tableau mode.
+simulate(1000, engine="stabilizer") {
+    q = quantum_register(1000)
+    for i in range(0, 999, 50) {
+        H(q[i])
+        CNOT(q[i], q[i + 1])
+        CZ(q[i + 1], q[i + 2])
+    }
+    print("city graph stabilizer sample", measure_all(shots=2))
+}

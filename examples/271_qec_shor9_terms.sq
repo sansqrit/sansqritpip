@@ -1,0 +1,4 @@
+let l = qec_logical("shor9")
+let stabs = l.stabilizers()
+let lx = l.logical_x_term()
+let lz = l.logical_z_term()

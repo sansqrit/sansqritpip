@@ -1,0 +1,812 @@
+# Sansqrit Quantum DSL
+
+**Author / maintainer:** Karthik V  
+**Version:** 0.3.3  
+**Package:** `sansqrit`  
+**Purpose:** a simplified quantum-computing DSL and Python runtime for scientists, AI/ML training datasets, educational quantum-programming examples, sparse/sharded simulation, lookup-accelerated execution, hierarchical tensor shards, QEC, and hardware export workflows.
+
+Sansqrit is designed to make quantum circuits readable:
+
+```sansqrit
+simulate(120, engine="hierarchical", block_size=10) {
+    q = quantum_register(120)
+    shard node_0 [0..9]
+    shard node_1 [10..19]
+
+    apply H on node_0
+    X(q[119])
+    apply CNOT on q[9], q[10] bridge_mode=sparse
+
+    print(hierarchical_report())
+    print(lookup_profile())
+}
+```
+
+It is **not** a claim that arbitrary dense 120-qubit state-vector simulation is possible on local hardware. Sansqrit supports 120+ logical qubit programs when the circuit remains sparse, Clifford-structured, low-entanglement, or decomposable into independent tensor blocks.
+
+---
+
+## Table of contents
+
+1. Installation
+2. Quick start
+3. Execution architecture
+4. 120-qubit dense simulation reality
+5. Sparse, sharded, hierarchical and MPS modes
+6. Precomputed lookup files
+7. Distributed computing model
+8. GPU backend
+9. Stabilizer backend
+10. Density/noise backend
+11. Quantum error correction framework
+12. Hardware export: Qiskit, Cirq, Braket, Azure, PennyLane, QASM
+13. Complete DSL syntax
+14. Gate/function reference
+15. Algorithms and high-level helpers
+16. Logging, diagnostics and troubleshooting
+17. AI/ML training usage
+18. Real-world 120+ qubit examples
+19. PyPI upload/release notes
+20. Limitations and safe claims
+
+---
+
+## 1. Installation
+
+```bash
+pip install sansqrit
+```
+
+Optional integrations:
+
+```bash
+pip install "sansqrit[qiskit]"
+pip install "sansqrit[cirq]"
+pip install "sansqrit[braket]"
+pip install "sansqrit[pennylane]"
+pip install "sansqrit[gpu]"
+pip install "sansqrit[all]"
+```
+
+Development install:
+
+```bash
+git clone <your-repo-url>
+cd sansqrit
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -e ".[all,dev]"
+```
+
+---
+
+## 2. Quick start
+
+Create `bell.sq`:
+
+```sansqrit
+simulate(2, engine="sparse") {
+    q = quantum_register(2)
+    H(q[0])
+    CNOT(q[0], q[1])
+    print(probabilities())
+    print(measure_all(shots=10))
+}
+```
+
+Run:
+
+```bash
+sansqrit run bell.sq
+```
+
+Export QASM:
+
+```bash
+sansqrit qasm bell.sq --version 3 -o bell.qasm
+```
+
+Inspect environment:
+
+```bash
+sansqrit doctor
+sansqrit backends
+sansqrit estimate 120
+sansqrit architecture
+sansqrit troubleshoot lookup
+sansqrit hardware
+```
+
+---
+
+## 3. Execution architecture
+
+Sansqrit uses a layered runtime:
+
+```mermaid
+flowchart TD
+    A[Sansqrit .sq DSL] --> B[Translator / Parser]
+    B --> C[Circuit History + Runtime Engine]
+    C --> D[Optimizer Passes]
+    D --> E[Adaptive Planner]
+    E -->|Sparse / few amplitudes| F[Sparse State Map]
+    E -->|Large sparse| G[Sharded Sparse State]
+    E -->|Independent <=10q blocks| H[Hierarchical Tensor Shards]
+    E -->|Cross-block low entanglement| I[MPS Bridge]
+    E -->|Clifford circuit| J[Stabilizer Tableau]
+    E -->|Noisy small circuit| K[Density Matrix]
+    E -->|GPU available and dense small| L[CuPy / GPU Statevector]
+    E -->|Cluster configured| M[TCP Distributed Sparse Workers]
+    F --> N[Lookup Matrices + Sparse Updates]
+    G --> N
+    H --> O[Packaged 1..10q Embedded Lookups]
+    I --> P[Tensor SVD / Bond Update]
+    J --> Q[Tableau Update]
+    K --> R[Kraus / Noise Channels]
+    L --> S[GPU Vector Operations]
+    M --> T[Shard Exchange / Coordinator]
+    N --> U[Measurement / QASM / Hardware Export]
+    O --> U
+    P --> U
+    Q --> U
+    R --> U
+    S --> U
+    T --> U
+```
+
+### Layers
+
+| Layer | What it does |
+|---|---|
+| DSL | Human-friendly `.sq` syntax. |
+| Translator | Converts Sansqrit into Python runtime calls. |
+| Circuit history | Records operations for export, optimization, verification and profiling. |
+| Optimizer | Cancels inverse gates, merges rotations, removes zero rotations. |
+| Planner | Recommends sparse, sharded, hierarchical, MPS, stabilizer, density, GPU or distributed mode. |
+| Lookup layer | Loads packaged precomputed gates and embedded <=10-qubit transitions. |
+| Sparse map | Stores only nonzero amplitudes as `{basis_index: amplitude}`. |
+| Sharded sparse map | Partitions sparse amplitudes into shards for locality and workers. |
+| Hierarchical tensor shards | Keeps independent 10-qubit blocks dense and promotes bridge entanglement to MPS. |
+| QEC layer | Logical qubits, stabilizer codes, syndrome extraction, decoders and correction. |
+| Hardware export | OpenQASM 2/3, Qiskit, Cirq, Braket, Azure payloads and PennyLane callable exports. |
+
+---
+
+## 4. 120-qubit dense simulation reality
+
+A dense `n`-qubit state vector contains `2^n` amplitudes. A 120-qubit dense vector has:
+
+```text
+2^120 ≈ 1.329e36 amplitudes
+```
+
+At complex128 precision, even one full vector is astronomically too large for ordinary hardware. Precomputed lookup, sharding and distributed execution reduce overhead and organize data, but they do **not** remove exponential dense-state growth.
+
+Sansqrit therefore uses this decision strategy:
+
+| Circuit structure | Recommended backend |
+|---|---|
+| Few active basis states | `sparse`, `sharded`, `threaded` |
+| Independent <=10-qubit blocks | `hierarchical` |
+| Low-entanglement chain/grid | `mps`, `hierarchical` bridge mode |
+| Clifford-only circuit | `stabilizer` |
+| Small noisy circuit | `density` |
+| Small/medium dense circuit with CUDA | `gpu` |
+| Multi-node sparse workloads | `distributed` |
+| Arbitrary dense 120-qubit state | Not feasible on normal hardware |
+
+---
+
+## 5. Sparse, sharded, hierarchical and MPS modes
+
+### Sparse mode
+
+```sansqrit
+simulate(120, engine="sparse") {
+    q = quantum_register(120)
+    X(q[119])
+    H(q[0])
+    CNOT(q[0], q[1])
+    print(engine_nnz())
+}
+```
+
+Sparse mode stores only active amplitudes. It is efficient when the number of nonzero amplitudes stays small.
+
+### Sharded sparse mode
+
+```sansqrit
+simulate(120, engine="sharded", n_shards=16, workers=8) {
+    q = quantum_register(120)
+    X(q[5])
+    X(q[87])
+    H(q[0])
+    CNOT(q[0], q[1])
+    print(shards())
+}
+```
+
+Sharding partitions active basis keys. It helps memory locality and distributed layout. It does not blindly split entangled systems into independent sub-simulators.
+
+### Hierarchical tensor shards
+
+```sansqrit
+simulate(120, engine="hierarchical", block_size=10) {
+    q = quantum_register(120)
+    shard block_0 [0..9]
+    shard block_1 [10..19]
+    apply H on block_0
+    apply X on block_1
+    print(hierarchical_report())
+}
+```
+
+A 120-qubit register becomes 12 local blocks of 10 qubits. Each local block can be represented by 1024 amplitudes, and precomputed embedded lookup tables can accelerate local static gates.
+
+### Bridge entanglement
+
+```sansqrit
+simulate(120, engine="hierarchical", block_size=10, cutoff=0.0, max_bond_dim=null) {
+    q = quantum_register(120)
+    H(q[9])
+    apply CNOT on q[9], q[10] bridge_mode=sparse
+    print(hierarchical_report())
+}
+```
+
+A cross-block gate such as `CNOT(q[9], q[10])` is not mathematically local to a single 10-qubit block. Sansqrit promotes the model to an MPS bridge so correlations are represented accurately when `cutoff=0.0` and `max_bond_dim=null`.
+
+---
+
+## 6. Precomputed lookup files
+
+The package includes real lookup data files:
+
+```text
+sansqrit/data/lookup_static_gates.json
+sansqrit/data/lookup_two_qubit_static_gates.json
+sansqrit/data/lookup_embedded_single_upto_10.json.gz
+sansqrit/data/lookup_metadata.json
+```
+
+Runtime lookup policy:
+
+1. If `n <= 10` and the gate is a static single-qubit gate, use embedded full-register transition tables.
+2. Else if the gate is a static single-qubit gate, use the packaged 2x2 matrix.
+3. Else if the gate is a static two-qubit gate, use the packaged 4x4 matrix.
+4. Else compute at runtime and optionally rely on higher-level block/cache optimizations.
+
+Check usage:
+
+```sansqrit
+simulate(10, engine="sparse", use_lookup=true) {
+    q = quantum_register(10)
+    H(q[0])
+    SX(q[3])
+    CNOT(q[0], q[1])
+    print(lookup_profile())
+}
+```
+
+---
+
+## 7. Distributed computing model
+
+Start workers:
+
+```bash
+sansqrit worker --host 0.0.0.0 --port 8765
+sansqrit worker --host 0.0.0.0 --port 8766
+```
+
+Use from Python:
+
+```python
+from sansqrit import QuantumEngine
+engine = QuantumEngine.create(120, backend="distributed", addresses=[("10.0.0.1", 8765), ("10.0.0.2", 8766)])
+```
+
+The built-in distributed backend is correctness-first. It is useful for sparse shard orchestration and testing. For production HPC, a future backend should add MPI/Ray/Dask, compressed amplitude transfer, worker-local gate kernels and topology-aware shard exchange.
+
+---
+
+## 8. GPU backend
+
+```bash
+pip install "sansqrit[gpu]"
+```
+
+```sansqrit
+simulate(24, engine="gpu") {
+    q = quantum_register(24)
+    H(q[0])
+    CNOT(q[0], q[1])
+    print(measure_all(shots=100))
+}
+```
+
+GPU acceleration helps small/medium dense state vectors. It does not make arbitrary dense 120-qubit simulation feasible.
+
+---
+
+## 9. Stabilizer backend
+
+```sansqrit
+simulate(1000, engine="stabilizer") {
+    q = quantum_register(1000)
+    for i in range(0, 999) {
+        H(q[i])
+        CNOT(q[i], q[i + 1])
+    }
+    print(measure_all(shots=5))
+}
+```
+
+The stabilizer backend is for Clifford circuits using gates such as `H`, `S`, `X`, `Y`, `Z`, `CNOT`, `CZ`, and `SWAP`. It does not support arbitrary non-Clifford rotations as exact tableau operations.
+
+---
+
+## 10. Density and noise backend
+
+```sansqrit
+simulate(3, engine="density") {
+    q = quantum_register(3)
+    H(q[0])
+    CNOT(q[0], q[1])
+    noise_bit_flip(q[1], 0.01)
+    noise_phase_flip(q[0], 0.01)
+    print(probabilities())
+}
+```
+
+Noise helpers:
+
+```text
+noise_bit_flip(q, p)
+noise_phase_flip(q, p)
+noise_depolarize(q, p)
+noise_amplitude_damping(q, gamma)
+```
+
+Density matrices scale as `4^n`, so use this backend for small noisy circuits.
+
+---
+
+## 11. Quantum error correction framework
+
+Sansqrit includes a dedicated QEC module.
+
+Supported codes:
+
+```text
+bit_flip
+phase_flip
+repetition3
+repetition distance-d
+shor9
+steane7
+five_qubit
+surface3
+surface distance-d helpers
+```
+
+Core DSL functions:
+
+```text
+qec_codes()
+qec_code(name, distance=null)
+qec_logical(code="bit_flip", base=0, name="logical", distance=null)
+qec_encode(logical)
+qec_decode(logical)
+qec_syndrome(logical, ancilla_base=null)
+qec_correct(logical, syndrome)
+qec_syndrome_and_correct(logical, ancilla_base=null)
+qec_inject_error(logical, pauli, physical_offset)
+logical_x(logical)
+logical_z(logical)
+logical_h(logical)
+logical_s(logical)
+logical_cx(control, target)
+qec_surface_lattice(distance=3)
+qec_syndrome_circuit(logical, ancilla_base=null)
+qec_optional_features()
+qec_stim_syndrome_text(logical, ancilla_base=null)
+```
+
+Bit-flip example:
+
+```sansqrit
+simulate(6, engine="sparse") {
+    q = quantum_register(6)
+    logical = qec_logical("bit_flip", base=0)
+    qec_encode(logical)
+    qec_inject_error(logical, "X", 1)
+    result = qec_syndrome_and_correct(logical, ancilla_base=3)
+    print(result)
+}
+```
+
+Surface-code helper:
+
+```sansqrit
+simulate(20, engine="sparse") {
+    q = quantum_register(20)
+    logical = qec_logical("surface", base=0, distance=3)
+    print(logical.stabilizers())
+    print(qec_surface_lattice(3).stabilizers())
+    print(qec_optional_features())
+}
+```
+
+The built-in surface-code decoder is educational/greedy. If `pymatching` is installed, Sansqrit exposes an integration point for MWPM-style decoding. If `stim` is installed, the package can emit syndrome-extraction text that can be adapted into Stim workflows.
+
+---
+
+## 12. Hardware export
+
+### OpenQASM 3
+
+```sansqrit
+simulate(3, engine="sparse") {
+    q = quantum_register(3)
+    H(q[0])
+    CNOT(q[0], q[1])
+    print(export_qasm3())
+}
+```
+
+### Hardware target summary
+
+```sansqrit
+simulate(4, engine="sparse") {
+    q = quantum_register(4)
+    H(q[0])
+    CNOT(q[0], q[1])
+    print(hardware_targets())
+    print(hardware_payload_summary())
+    print(export_hardware("azure"))
+}
+```
+
+Supported export modes:
+
+| Target | Export |
+|---|---|
+| Qiskit / IBM | `qiskit.QuantumCircuit` or OpenQASM fallback |
+| Cirq | `cirq.Circuit` or OpenQASM fallback |
+| Amazon Braket | `braket.circuits.Circuit` or OpenQASM fallback |
+| Azure Quantum | OpenQASM 3 / Qiskit / Cirq payload style |
+| PennyLane | Callable quantum function for QNode construction |
+| OpenQASM 2/3 | Text export |
+
+Sansqrit does not store cloud credentials. Submission to cloud hardware remains controlled by the provider SDK and user account.
+
+---
+
+## 13. Complete DSL syntax
+
+### Variables
+
+```sansqrit
+x = 10
+y = 3.14
+name = "sansqrit"
+flag = true
+nothing = null
+```
+
+### Lists, dictionaries and math
+
+```sansqrit
+values = [1, 2, 3, 4]
+config = {"backend": "sparse", "shots": 1000}
+print(sum(values))
+print(mean(values))
+```
+
+### Functions
+
+```sansqrit
+fn square(x) {
+    return x * x
+}
+
+print(square(7))
+```
+
+### Lambdas and pipelines
+
+```sansqrit
+values = [1, 2, 3, 4]
+result = values |> map(fn(x) => x * x) |> filter(fn(x) => x > 4)
+print(result)
+```
+
+### Loops and conditionals
+
+```sansqrit
+for i in range(0, 10) {
+    if i % 2 == 0 {
+        print(i)
+    } else {
+        print("odd")
+    }
+}
+```
+
+### Simulation blocks
+
+```sansqrit
+simulate(5, engine="sparse") {
+    q = quantum_register(5)
+    H(q[0])
+}
+```
+
+Arguments:
+
+```text
+simulate(n_qubits, engine="sparse", n_shards=1, workers=1, seed=null, use_lookup=true, max_bond_dim=null, cutoff=0.0, addresses=null, block_size=10)
+```
+
+### Shard declarations
+
+```sansqrit
+shard block_A [0..9]
+apply H on block_A
+```
+
+### Bridge gate syntax
+
+```sansqrit
+apply CNOT on q[9], q[10] bridge_mode=sparse
+```
+
+The translator routes this to the engine while retaining the bridge-mode intention for hierarchical backends.
+
+---
+
+## 14. Gate/function reference
+
+### Single-qubit gates
+
+```text
+I(q)
+X(q)
+Y(q)
+Z(q)
+H(q)
+S(q)
+Sdg(q)
+T(q)
+Tdg(q)
+SX(q)
+SXdg(q)
+Rx(q, theta)
+Ry(q, theta)
+Rz(q, theta)
+Phase(q, theta)
+U1(q, theta)
+U2(q, phi, lambda)
+U3(q, theta, phi, lambda)
+```
+
+### Two-qubit gates
+
+```text
+CNOT(c, t)
+CX(c, t)
+CZ(c, t)
+CY(c, t)
+CH(c, t)
+CSX(c, t)
+SWAP(a, b)
+iSWAP(a, b)
+SqrtSWAP(a, b)
+fSWAP(a, b)
+DCX(a, b)
+CRx(c, t, theta)
+CRy(c, t, theta)
+CRz(c, t, theta)
+CP(c, t, theta)
+CU(c, t, theta, phi, lambda)
+RXX(a, b, theta)
+RYY(a, b, theta)
+RZZ(a, b, theta)
+RZX(a, b, theta)
+ECR(a, b)
+MS(a, b)
+```
+
+### Three/multi-qubit gates
+
+```text
+Toffoli(a, b, c)
+CCX(a, b, c)
+Fredkin(c, a, b)
+CSWAP(c, a, b)
+CCZ(a, b, c)
+MCX(q0, q1, ..., target)
+MCZ(q0, q1, ...)
+C3X(a, b, c, target)
+C4X(a, b, c, d, target)
+```
+
+### Whole-register helpers
+
+```text
+H_all(qubits=null)
+Rx_all(theta, qubits=null)
+Ry_all(theta, qubits=null)
+Rz_all(theta, qubits=null)
+qft(q=null)
+iqft(q=null)
+measure(q)
+measure_all(q=null, shots=1)
+probabilities(q=null)
+expectation_z(q)
+expectation_zz(a, b)
+engine_nnz()
+shards()
+lookup_profile()
+hierarchical_report()
+```
+
+### File/data helpers
+
+```text
+read_file(path)
+write_file(path, text)
+read_json(path)
+write_json(path, obj)
+read_csv(path)
+write_csv(path, rows)
+```
+
+### Diagnostics and architecture helpers
+
+```text
+sansqrit_doctor()
+sansqrit_backends()
+estimate_qubits(n_qubits)
+execution_flow()
+architecture_layers()
+lookup_architecture()
+explain_120_qubits_dense()
+troubleshooting(topic=null)
+research_gaps()
+enable_logging(level="INFO", path=null)
+log_sansqrit_event(event, fields={})
+```
+
+---
+
+## 15. Algorithms and high-level helpers
+
+```text
+grover_search
+grover_search_multi
+shor_factor
+vqe_h2
+qaoa_maxcut
+quantum_phase_estimation
+hhl_solve
+bernstein_vazirani
+simon_algorithm
+deutsch_jozsa
+quantum_counting
+swap_test
+teleport
+superdense_coding
+bb84_qkd
+amplitude_estimation
+variational_classifier
+```
+
+---
+
+## 16. Logging, diagnostics and troubleshooting
+
+```sansqrit
+enable_logging("INFO", "sansqrit.log")
+log_sansqrit_event("start", {"program": "sparse_120"})
+print(sansqrit_doctor())
+print(sansqrit_backends())
+print(troubleshooting("lookup"))
+```
+
+CLI:
+
+```bash
+sansqrit doctor
+sansqrit backends
+sansqrit estimate 120
+sansqrit troubleshoot distributed
+sansqrit architecture
+sansqrit hardware
+```
+
+---
+
+## 17. AI/ML training usage
+
+Sansqrit ships examples and docs inside the wheel so AI tools can inspect them after installation.
+
+```python
+from sansqrit.dataset import builtin_training_records, generate_jsonl
+records = builtin_training_records()
+generate_jsonl("sansqrit_training.jsonl", records)
+```
+
+Training task types:
+
+| Task | Input | Output |
+|---|---|---|
+| DSL generation | Natural language algorithm request | `.sq` program |
+| DSL correction | Buggy `.sq` | Corrected `.sq` |
+| DSL-to-QASM | `.sq` program | OpenQASM 2/3 |
+| Backend planning | Circuit description | Recommended backend + explanation |
+| QEC explanation | Error model + code | Syndrome/correction flow |
+| Hardware export | Sansqrit circuit | Provider payload/QASM |
+
+---
+
+## 18. Real-world 120+ qubit example themes
+
+The package includes 300+ examples. New high-qubit examples cover:
+
+- Climate sensor anomaly encoding
+- Supply-chain route optimization
+- Finance portfolio risk flags
+- Cybersecurity graph threat propagation
+- Telecom network routing
+- Drug-discovery feature maps
+- QEC satellite link protection
+- Smart-grid sparse fault localization
+- Port logistics
+- Aerospace sensor fusion
+- 1000-qubit Clifford/stabilizer workflows
+
+Run:
+
+```bash
+sansqrit run examples/278_climate_128q_sparse_sensors.sq
+sansqrit run examples/283_hierarchical_120q_bridge_iot.sq
+sansqrit run examples/300_city_1000q_stabilizer_graph.sq
+```
+
+---
+
+## 19. PyPI release notes
+
+Build:
+
+```bash
+python -m pip install --upgrade build twine
+rm -rf build dist *.egg-info src/*.egg-info
+python -m build --sdist --wheel
+python -m twine check dist/*
+python -m twine upload dist/*
+```
+
+If version `0.3.3` is already uploaded to PyPI, PyPI will reject another upload with the same version. In that case, bump to `0.3.4` or later.
+
+---
+
+## 20. Limitations and safe claims
+
+Safe claim:
+
+> Sansqrit supports 120+ logical qubit programs using sparse, sharded, lookup-accelerated, stabilizer, MPS, hierarchical tensor, density-matrix, GPU and distributed backends when the circuit has exploitable structure.
+
+Unsafe claim:
+
+> Sansqrit can simulate any arbitrary dense 120-qubit quantum state on local hardware.
+
+That is not physically realistic.
+
+---
+
+## License
+
+MIT.

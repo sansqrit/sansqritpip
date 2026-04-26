@@ -1,0 +1,12 @@
+# Scenario 192: Battery and materials candidate screening: scenario 12
+# Strategy: MPS/tensor-network for low-entanglement neighbor structure.
+simulate(130, engine="mps", max_bond_dim=64, cutoff=1e-12, use_lookup=true) {
+    q = quantum_register(130)
+    H(q[0])
+    for i in range(0, 72) {
+        CNOT(q[i], q[i + 1])
+        Rz(q[i + 1], PI / 5)
+    }
+    print("scenario", "materials", "mps_low_entanglement_chain")
+    print("estimate", estimate_qubits(130))
+}

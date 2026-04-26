@@ -1,0 +1,7 @@
+simulate(5, engine="density") {
+  let q = quantum_register(5)
+  let l = qec_logical("bit_flip", base=0)
+  qec_encode(l)
+  noise_bit_flip(q[1], 0.1)
+  let tr = current_engine().trace()
+}

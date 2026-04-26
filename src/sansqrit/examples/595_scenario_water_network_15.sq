@@ -1,0 +1,15 @@
+# Scenario 295: Water-network leakage localization: scenario 15
+# Strategy: sparse + sharded execution for 150 logical qubits.
+simulate(150, engine="sharded", n_shards=15, workers=4, use_lookup=true) {
+    q = quantum_register(150)
+    X(q[67])
+    X(q[24])
+    X(q[43])
+    H(q[127])
+    CNOT(q[127], q[22])
+    Rz(q[127], PI / 4)
+    CZ(q[22], q[93])
+    print("scenario", "water_network", "nnz", engine_nnz())
+    print("lookup", lookup_profile())
+    print("estimate", estimate_qubits(150))
+}

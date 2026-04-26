@@ -142,6 +142,25 @@ class SparseState:
             rows.append((conventional_bitstring(state, self.n_qubits), amp, abs(amp) ** 2))
         return rows
 
+
+    def apply_precomputed_transition(self, transition_rows: list[list[tuple[int, complex]]]) -> None:
+        """Apply a packaged full-register sparse transition lookup.
+
+        ``transition_rows[input_state]`` contains ``(output_state, coeff)`` pairs.
+        This is used for n<=10 precomputed embedded single-qubit gates.
+        """
+        max_state = 1 << self.n_qubits
+        if len(transition_rows) != max_state:
+            raise QuantumError(f"transition table has {len(transition_rows)} rows, expected {max_state}")
+        out: dict[int, complex] = {}
+        for state, amp in (self.amplitudes or {}).items():
+            if state < 0 or state >= max_state:
+                raise QuantumError(f"basis state {state} out of range for {self.n_qubits} qubits")
+            for dst, coeff in transition_rows[state]:
+                _prune_into(out, int(dst), coeff * amp, self.eps)
+        self.amplitudes = out or {0: 0j}
+        self.normalize()
+
     def apply_single_matrix(self, qubit: int, matrix: tuple[complex, complex, complex, complex], *, workers: int = 1, parallel_threshold: int = 4096) -> None:
         self.ensure_qubit(qubit)
         items = list((self.amplitudes or {}).items())

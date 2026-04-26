@@ -1,0 +1,15 @@
+# Scenario 306: Precision-agriculture irrigation scheduling: scenario 06
+# Strategy: sparse + sharded execution for 130 logical qubits.
+simulate(130, engine="sharded", n_shards=13, workers=4, use_lookup=true) {
+    q = quantum_register(130)
+    X(q[8])
+    X(q[73])
+    X(q[54])
+    H(q[100])
+    CNOT(q[100], q[69])
+    Rz(q[100], PI / 5)
+    CZ(q[69], q[16])
+    print("scenario", "agriculture", "nnz", engine_nnz())
+    print("lookup", lookup_profile())
+    print("estimate", estimate_qubits(130))
+}

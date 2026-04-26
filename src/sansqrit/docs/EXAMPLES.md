@@ -254,3 +254,8 @@ This directory contains 250 Sansqrit `.sq` programs. They are grouped for human 
 - `248_ai_training_minimal_pair.sq` — 248 ai training minimal pair
 - `249_large_sparse_oracle_150q.sq` — 249 large sparse oracle 150q
 - `250_large_stabilizer_4096q.sq` — 250 large stabilizer 4096q
+
+## v0.3.3 hierarchical tensor examples
+
+- `276_hierarchical_120q_local_blocks.sq` — 120 logical qubits represented as twelve dense 10-qubit blocks.
+- `277_hierarchical_120q_bridge_mps.sq` — cross-block bridge gate with safe MPS promotion.

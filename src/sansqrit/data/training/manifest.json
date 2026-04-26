@@ -1,0 +1,133 @@
+{
+  "author": "Karthik V",
+  "created_utc": "2026-04-26T12:28:31.200136+00:00",
+  "dataset": "sansqrit-synthetic-training-v1",
+  "description": "Extensive synthetic instruction, code, explanation, troubleshooting, QEC, hardware-export and preference dataset for training AI models to understand and generate Sansqrit quantum DSL programs. Includes 500 real-world scenario question/answer/code records covering scalable Sansqrit use cases.",
+  "files": [
+    {
+      "name": "sansqrit_sft_train_v1.jsonl.gz",
+      "notes": "Includes original synthetic SFT data plus 500 real-world scenario Q/A/code records.",
+      "records": 30100,
+      "schema": "instruction-input-output-v1"
+    },
+    {
+      "name": "sansqrit_sft_eval_v1.jsonl.gz",
+      "records": 1500,
+      "schema": "instruction-input-output-v1"
+    },
+    {
+      "name": "sansqrit_preference_v1.jsonl.gz",
+      "records": 5000,
+      "schema": "preference-v1"
+    },
+    {
+      "fields": [
+        "id",
+        "domain",
+        "title",
+        "question",
+        "answer",
+        "sansqrit_code",
+        "expected_backend",
+        "qubits",
+        "tags",
+        "quality_notes"
+      ],
+      "name": "sansqrit_real_world_scenarios_v1.jsonl.gz",
+      "records": 500,
+      "schema": "real-world-scenario-v1"
+    }
+  ],
+  "intended_use": "Fine-tuning, supervised instruction tuning, DPO/preference training, retrieval-augmented generation, evaluation, prompt engineering and documentation-aware AI model training for Sansqrit DSL.",
+  "license": "MIT",
+  "limitations": "Synthetic data is generated from templates and package examples. It should be supplemented with human-reviewed traces and verified circuit outputs before safety-critical use.",
+  "scenario_domains": [
+    "aerospace",
+    "agriculture",
+    "climate_risk",
+    "cybersecurity",
+    "drug_discovery",
+    "fraud",
+    "genomics",
+    "hardware_calibration",
+    "healthcare",
+    "iot_edge",
+    "manufacturing",
+    "materials",
+    "portfolio",
+    "pqc_migration",
+    "qec_satellite",
+    "quantum_network",
+    "robotics",
+    "satellite",
+    "seismology",
+    "semiconductor",
+    "smart_grid",
+    "supply_chain",
+    "telecom",
+    "traffic",
+    "water_network"
+  ],
+  "scenario_records": 500,
+  "schemas": {
+    "instruction-input-output-v1": {
+      "fields": [
+        "id",
+        "dataset",
+        "schema",
+        "language",
+        "task_type",
+        "instruction",
+        "input",
+        "output",
+        "tags",
+        "difficulty",
+        "split",
+        "source",
+        "author",
+        "license",
+        "quality_notes"
+      ]
+    },
+    "preference-v1": {
+      "fields": [
+        "id",
+        "dataset",
+        "schema",
+        "language",
+        "prompt",
+        "chosen",
+        "rejected",
+        "tags",
+        "split",
+        "source",
+        "author",
+        "license",
+        "quality_notes"
+      ]
+    }
+  },
+  "topics": [
+    "DSL syntax",
+    "gates",
+    "circuits",
+    "algorithms",
+    "large qubit sparse/sharded execution",
+    "hierarchical tensor shards",
+    "precomputed lookups",
+    "distributed computing",
+    "QEC",
+    "surface codes",
+    "hardware exports",
+    "QASM",
+    "troubleshooting",
+    "backend selection",
+    "bug fixing",
+    "preference training",
+    "DSL to Python",
+    "safe dense-state warnings"
+  ],
+  "total_records": 37100,
+  "updated_utc": "2026-04-26T12:40:06.616774+00:00",
+  "version": "0.3.4-real-world-scenarios"
+}

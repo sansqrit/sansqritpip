@@ -1,0 +1,10 @@
+# Aerospace sensor-fusion sparse feature map.
+simulate(140, engine="sharded", n_shards=14) {
+    q = quantum_register(140)
+    X(q[13])
+    X(q[72])
+    X(q[139])
+    H(q[1])
+    CNOT(q[1], q[13])
+    print(explain_120_qubits_dense())
+}

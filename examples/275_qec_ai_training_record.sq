@@ -1,0 +1,1 @@
+let record = {"task": "qec_bit_flip_correction", "dsl": "qec_logical plus qec_syndrome_and_correct", "code": qec_code("bit_flip").description}

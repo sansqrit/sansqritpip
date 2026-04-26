@@ -1,0 +1,10 @@
+# 121-qubit sparse circuit exported as provider-neutral OpenQASM 3 payload.
+simulate(121, engine="sparse") {
+    q = quantum_register(121)
+    X(q[120])
+    H(q[0])
+    CNOT(q[0], q[1])
+    payload = export_hardware("azure")
+    print(payload["provider"])
+    print(payload["format"])
+}

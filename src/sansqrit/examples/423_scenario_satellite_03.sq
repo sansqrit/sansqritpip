@@ -1,0 +1,15 @@
+# Scenario 123: Satellite telemetry anomaly isolation: scenario 03
+# Strategy: sparse + sharded execution for 156 logical qubits.
+simulate(156, engine="sharded", n_shards=15, workers=4, use_lookup=true) {
+    q = quantum_register(156)
+    X(q[141])
+    X(q[122])
+    X(q[135])
+    H(q[33])
+    CNOT(q[33], q[84])
+    Rz(q[33], PI / 7)
+    CZ(q[84], q[131])
+    print("scenario", "satellite", "nnz", engine_nnz())
+    print("lookup", lookup_profile())
+    print("estimate", estimate_qubits(156))
+}

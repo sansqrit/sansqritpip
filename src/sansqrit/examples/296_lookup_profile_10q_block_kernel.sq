@@ -1,0 +1,8 @@
+# Explicit 10-qubit lookup-profile demonstration.
+simulate(10, engine="sparse", use_lookup=true) {
+    q = quantum_register(10)
+    for i in range(0, 10) {
+        H(q[i])
+    }
+    print(lookup_profile())
+}

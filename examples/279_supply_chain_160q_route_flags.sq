@@ -1,0 +1,11 @@
+# 160-qubit sparse route flags for supply-chain risk analysis.
+simulate(160, engine="sharded", n_shards=20, workers=4, use_lookup=true) {
+    q = quantum_register(160)
+    for i in range(0, 160, 32) {
+        X(q[i])
+    }
+    H(q[1])
+    CNOT(q[1], q[33])
+    Rz(q[64], PI / 6)
+    print("supply chain shards", shards())
+}

@@ -1,0 +1,11 @@
+# Export both OpenQASM 2 and OpenQASM 3 for a 122-qubit sparse circuit.
+simulate(122, engine="sparse") {
+    q = quantum_register(122)
+    H(q[0])
+    CNOT(q[0], q[1])
+    X(q[121])
+    q3 = export_qasm3()
+    q2 = export_qasm2()
+    print(len(q3))
+    print(len(q2))
+}

@@ -1,0 +1,7 @@
+# Surface-code helper embedded in a 121-qubit control register.
+simulate(121, engine="sparse") {
+    q = quantum_register(121)
+    logical = qec_logical("surface", base=0, distance=3)
+    print(logical.stabilizers())
+    print(qec_stim_syndrome_text(logical, ancilla_base=9))
+}

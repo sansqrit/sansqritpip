@@ -119,8 +119,26 @@ def translate(source: str, *, filename: str = "<sansqrit>") -> str:
             m = re.match(r"simulate(?:\((.*)\))?$", line)
             if not m:
                 raise SansqritSyntaxError(f"{filename}:{raw_no}: invalid simulate block")
-            args = m.group(1) or ""
+            args = _convert_expr(m.group(1) or "")
             line = f"with simulate({args}) as __engine__:"
+            opens = False
+        elif line.startswith("shard "):
+            m = re.match(r"shard\s+([A-Za-z_]\w*)\s*\[\s*(\d+)\s*\.\.\s*(\d+)\s*\]$", line)
+            if not m:
+                raise SansqritSyntaxError(f"{filename}:{raw_no}: invalid shard declaration; use shard name [start..end]")
+            line = f'{m.group(1)} = shard("{m.group(1)}", {m.group(2)}, {m.group(3)})'
+            opens = False
+        elif line.startswith("apply "):
+            m = re.match(r"apply\s+([A-Za-z_]\w*)\s+on\s+(.+)$", line)
+            if not m:
+                raise SansqritSyntaxError(f"{filename}:{raw_no}: invalid apply statement; use apply H on block")
+            gate = m.group(1)
+            rest = m.group(2).strip()
+            rest = re.sub(r"\s+bridge_mode\s*=\s*[A-Za-z_]\w*", "", rest).strip()
+            if re.match(r"^[A-Za-z_]\w*$", rest):
+                line = f'apply_block("{gate}", {rest})'
+            else:
+                line = f'{gate}({rest})'
             opens = False
         elif line.startswith("else if "):
             line = "elif " + line[8:].strip() + ":"

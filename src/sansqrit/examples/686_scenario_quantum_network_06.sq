@@ -1,0 +1,13 @@
+# Scenario 386: Quantum-network repeater and QKD planning: scenario 06
+# Strategy: Clifford-only large circuit via stabilizer tableau.
+simulate(514, engine="stabilizer") {
+    q = quantum_register(514)
+    for i in range(0, 220, 26) {
+        H(q[i])
+        CNOT(q[i], q[i + 1])
+        CZ(q[i + 1], q[i + 2])
+        S(q[i + 2])
+    }
+    print("scenario", "quantum_network", "backend", plan_backend(514, []))
+    print("sample", measure_all(shots=2))
+}

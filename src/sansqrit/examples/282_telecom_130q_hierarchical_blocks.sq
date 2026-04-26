@@ -1,0 +1,11 @@
+# 130-qubit telecom channel model using 10-qubit hierarchical tensor blocks.
+simulate(130, engine="hierarchical", block_size=10, use_lookup=true) {
+    q = quantum_register(130)
+    shard tower_0 [0..9]
+    shard tower_1 [10..19]
+    shard tower_2 [20..29]
+    apply H on tower_0
+    apply X on tower_1
+    apply Z on tower_2
+    print(hierarchical_report())
+}

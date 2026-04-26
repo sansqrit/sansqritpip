@@ -1,0 +1,7 @@
+# PennyLane target listing and payload summary without requiring PennyLane install.
+simulate(124, engine="sparse") {
+    q = quantum_register(124)
+    H(q[0])
+    CNOT(q[0], q[1])
+    print(hardware_payload_summary())
+}

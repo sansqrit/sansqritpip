@@ -1,0 +1,12 @@
+# Scenario 483: Seismic event correlation screening: scenario 03
+# Strategy: MPS/tensor-network for low-entanglement neighbor structure.
+simulate(142, engine="mps", max_bond_dim=64, cutoff=1e-12, use_lookup=true) {
+    q = quantum_register(142)
+    H(q[0])
+    for i in range(0, 63) {
+        CNOT(q[i], q[i + 1])
+        Rz(q[i + 1], PI / 8)
+    }
+    print("scenario", "seismology", "mps_low_entanglement_chain")
+    print("estimate", estimate_qubits(142))
+}

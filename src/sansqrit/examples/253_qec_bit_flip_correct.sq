@@ -1,0 +1,9 @@
+simulate(5) {
+  let q = quantum_register(5)
+  let l = qec_logical("bit_flip", base=0)
+  qec_encode(l)
+  qec_inject_error(l, "X", 1)
+  let result = qec_syndrome_and_correct(l, ancilla_base=3)
+  qec_decode(l)
+  let counts = measure_all(q)
+}

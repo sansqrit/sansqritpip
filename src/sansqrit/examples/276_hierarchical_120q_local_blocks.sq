@@ -1,0 +1,13 @@
+# 120-qubit hierarchical tensor shards: local dense 10-qubit blocks.
+simulate(120, engine="hierarchical", block_size=10, max_bond_dim=null, cutoff=0.0) {
+    q = quantum_register(120)
+    shard block_A [0..9]
+    shard block_B [10..19]
+    shard block_L [110..119]
+
+    apply H on block_A
+    apply X on block_B
+    apply Z on block_L
+
+    print(hierarchical_report())
+}

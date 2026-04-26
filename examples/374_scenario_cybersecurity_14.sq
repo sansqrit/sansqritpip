@@ -1,0 +1,13 @@
+# Scenario 074: Network intrusion and cryptographic health monitoring: scenario 14
+# Strategy: Clifford-only large circuit via stabilizer tableau.
+simulate(1008, engine="stabilizer") {
+    q = quantum_register(1008)
+    for i in range(0, 220, 20) {
+        H(q[i])
+        CNOT(q[i], q[i + 1])
+        CZ(q[i + 1], q[i + 2])
+        S(q[i + 2])
+    }
+    print("scenario", "cybersecurity", "backend", plan_backend(1008, []))
+    print("sample", measure_all(shots=2))
+}

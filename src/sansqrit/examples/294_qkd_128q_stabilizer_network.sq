@@ -1,0 +1,9 @@
+# 128-qubit Clifford QKD network skeleton.
+simulate(128, engine="stabilizer") {
+    q = quantum_register(128)
+    for i in range(0, 64, 8) {
+        H(q[i])
+        CNOT(q[i], q[i + 64])
+    }
+    print(measure_all(shots=4))
+}

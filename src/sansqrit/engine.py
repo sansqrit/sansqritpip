@@ -15,6 +15,7 @@ from .lookup import DEFAULT_LOOKUP, LookupTable
 from .sharding import ShardedState, ShardInfo
 from .sparse import SparseState
 from .types import QuantumRegister, QubitRef, qubit_index
+from .profiler import LookupProfile
 
 
 @dataclass
@@ -46,6 +47,7 @@ class QuantumEngine:
             raise QuantumError("QuantumEngine requires at least one qubit")
         self.state = SparseState(self.n_qubits, eps=self.config.eps)
         self.history: list[GateOp] = []
+        self.profile = LookupProfile()
         self.rng = Random(self.config.seed)
         if self.config.backend == "threaded" and self.config.workers <= 1:
             self.config.workers = 2
@@ -66,12 +68,24 @@ class QuantumEngine:
         - mps/tensor: matrix-product-state tensor backend;
         - density/noisy: sparse density matrix with noise channels;
         - gpu/cupy: optional dense CuPy state-vector backend;
-        - distributed/cluster: TCP worker-backed sparse backend.
+        - distributed/cluster: TCP worker-backed sparse backend;
+        - hierarchical/tensor-shards: 10-qubit dense local blocks with MPS bridge promotion.
         """
         backend = backend or "sparse"
         if backend in {"stabilizer", "clifford"}:
             from .stabilizer import StabilizerEngine
             return StabilizerEngine(n_qubits, seed=seed)
+        if backend in {"hierarchical", "hierarchical-tensor", "tensor-shards", "block-tensor"}:
+            from .hierarchical import HierarchicalTensorEngine
+            return HierarchicalTensorEngine(
+                n_qubits,
+                block_size=int(kwargs.get("block_size", 10)),
+                use_lookup=use_lookup,
+                max_bond_dim=kwargs.get("max_bond_dim", None),
+                cutoff=kwargs.get("cutoff", 0.0),
+                seed=seed,
+                eps=eps,
+            )
         if backend in {"mps", "tensor", "tensor-network"}:
             from .mps import MPSEngine
             return MPSEngine(n_qubits, max_bond_dim=kwargs.get("max_bond_dim", 128),
@@ -110,20 +124,46 @@ class QuantumEngine:
         self._sync_shards()
         return self.sharded.info()
 
+    def lookup_report(self) -> dict:
+        """Return lookup/sharding profiling counters for diagnostics."""
+        return self.profile.to_dict()
+
+    def lookup_report_text(self) -> str:
+        return self.profile.report()
+
     def apply(self, name: str, *qubits: int | QubitRef, params: Sequence[float] = ()) -> None:
         name = canonical_gate_name(name)
         qidx = tuple(qubit_index(q) for q in qubits)
         params = tuple(float(p) for p in params)
         validate_gate_arity(name, qidx, params)
         if name in SINGLE_GATES:
-            if self.config.use_lookup and self.lookup.has_single(name) and not params:
-                matrix = self.lookup.matrix(name)
+            if (
+                self.config.use_lookup
+                and not params
+                and self.lookup.has_embedded_single(self.n_qubits, qidx[0], name)
+            ):
+                # Fast middle-layer path: packaged precomputed full-register
+                # transition table for n<=10 static single-qubit gates.
+                self.profile.embedded_single_hits += 1
+                self.state.apply_precomputed_transition(
+                    self.lookup.embedded_single_transition(self.n_qubits, qidx[0], name)
+                )
             else:
-                matrix = matrix_2x2(name, params)
-            workers = self.config.workers if self.config.backend in {"threaded", "sharded"} else 1
-            self.state.apply_single_matrix(qidx[0], matrix, workers=workers, parallel_threshold=self.config.parallel_threshold)
+                if self.config.use_lookup and self.lookup.has_single(name) and not params:
+                    self.profile.static_single_hits += 1
+                    matrix = self.lookup.matrix(name)
+                else:
+                    self.profile.runtime_fallbacks += 1
+                    matrix = matrix_2x2(name, params)
+                workers = self.config.workers if self.config.backend in {"threaded", "sharded"} else 1
+                self.state.apply_single_matrix(qidx[0], matrix, workers=workers, parallel_threshold=self.config.parallel_threshold)
         elif name in TWO_GATES:
-            self.state.apply_two(name, qidx[0], qidx[1], params)
+            if self.config.use_lookup and not params and self.lookup.has_two(name):
+                self.profile.static_two_hits += 1
+                self.state.apply_two_matrix(qidx[0], qidx[1], self.lookup.matrix4(name))
+            else:
+                self.profile.runtime_fallbacks += 1
+                self.state.apply_two(name, qidx[0], qidx[1], params)
         elif name in THREE_GATES:
             if name == "Toffoli":
                 self.state.apply_mcx(qidx[:2], qidx[2])

@@ -1,0 +1,15 @@
+# Scenario 272: Robotics path planning and collision flags: scenario 12
+# Strategy: sparse + sharded execution for 154 logical qubits.
+simulate(154, engine="sharded", n_shards=15, workers=4, use_lookup=true) {
+    q = quantum_register(154)
+    X(q[144])
+    X(q[57])
+    X(q[26])
+    H(q[76])
+    CNOT(q[76], q[73])
+    Rz(q[76], PI / 6)
+    CZ(q[73], q[0])
+    print("scenario", "robotics", "nnz", engine_nnz())
+    print("lookup", lookup_profile())
+    print("estimate", estimate_qubits(154))
+}

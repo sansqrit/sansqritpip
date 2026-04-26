@@ -1,0 +1,4 @@
+let code = qec_code("bit_flip")
+let l = qec_logical("bit_flip")
+let stabs = l.stabilizers()
+let syndrome_ops = qec_syndrome_circuit(l, ancilla_base=3)

@@ -1,0 +1,42 @@
+{
+  "files": {
+    "embedded_single_transitions": "lookup_embedded_single_upto_10.json.gz",
+    "single_matrices": "lookup_static_gates.json",
+    "two_qubit_matrices": "lookup_two_qubit_static_gates.json"
+  },
+  "format": "sansqrit-precomputed-lookup-v1",
+  "max_embedded_qubits": 10,
+  "notes": [
+    "Embedded transition tables are precomputed for all n=1..10, all target positions, and all static single-qubit gates.",
+    "Parametric gates are intentionally computed at runtime because parameters are continuous.",
+    "Combinatorial products of every possible length-10 circuit are not finite in practical package size; Sansqrit fuses/caches gate sequences at runtime where appropriate."
+  ],
+  "single_qubit_static_gates": [
+    "H",
+    "I",
+    "S",
+    "SX",
+    "SXdg",
+    "Sdg",
+    "T",
+    "Tdg",
+    "X",
+    "Y",
+    "Z"
+  ],
+  "two_qubit_static_gates": [
+    "CH",
+    "CNOT",
+    "CSX",
+    "CY",
+    "CZ",
+    "DCX",
+    "ECR",
+    "MS",
+    "SWAP",
+    "SqrtSWAP",
+    "fSWAP",
+    "iSWAP"
+  ],
+  "version": "0.4.0"
+}

@@ -1,0 +1,12 @@
+# Scenario 103: Urban traffic signal optimization: scenario 03
+# Strategy: MPS/tensor-network for low-entanglement neighbor structure.
+simulate(138, engine="mps", max_bond_dim=64, cutoff=1e-12, use_lookup=true) {
+    q = quantum_register(138)
+    H(q[0])
+    for i in range(0, 63) {
+        CNOT(q[i], q[i + 1])
+        Rz(q[i + 1], PI / 8)
+    }
+    print("scenario", "traffic", "mps_low_entanglement_chain")
+    print("estimate", estimate_qubits(138))
+}

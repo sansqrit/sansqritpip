@@ -1,0 +1,10 @@
+simulate(8) {
+  let q = quantum_register(8)
+  let a = qec_logical("bit_flip", base=0, name="a")
+  let b = qec_logical("bit_flip", base=3, name="b")
+  qec_encode(a)
+  qec_encode(b)
+  logical_x(a)
+  logical_cx(a, b)
+  let counts = measure_all(q)
+}

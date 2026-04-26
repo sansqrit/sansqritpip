@@ -1,0 +1,15 @@
+# Scenario 016: Climate risk and extreme-weather sensor triage: scenario 16
+# Strategy: sparse + sharded execution for 130 logical qubits.
+simulate(130, engine="sharded", n_shards=13, workers=4, use_lookup=true) {
+    q = quantum_register(130)
+    X(q[98])
+    X(q[113])
+    X(q[14])
+    H(q[40])
+    CNOT(q[40], q[129])
+    Rz(q[40], PI / 5)
+    CZ(q[129], q[86])
+    print("scenario", "climate_risk", "nnz", engine_nnz())
+    print("lookup", lookup_profile())
+    print("estimate", estimate_qubits(130))
+}

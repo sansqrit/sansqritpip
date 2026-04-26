@@ -1,0 +1,3 @@
+let codes = qec_codes()
+let has_surface = "surface" in codes
+let has_shor = "shor9" in codes

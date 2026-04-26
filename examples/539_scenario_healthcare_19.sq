@@ -1,0 +1,15 @@
+# Scenario 239: Hospital triage and resource allocation: scenario 19
+# Strategy: sparse + sharded execution for 136 logical qubits.
+simulate(136, engine="sharded", n_shards=13, workers=4, use_lookup=true) {
+    q = quantum_register(136)
+    X(q[89])
+    X(q[10])
+    X(q[7])
+    H(q[5])
+    CNOT(q[5], q[120])
+    Rz(q[5], PI / 8)
+    CZ(q[120], q[71])
+    print("scenario", "healthcare", "nnz", engine_nnz())
+    print("lookup", lookup_profile())
+    print("estimate", estimate_qubits(136))
+}

@@ -181,6 +181,20 @@ class MPSEngine:
                 out[format(basis, f"0{self.n_qubits}b")] = p
         return dict(sorted(out.items()))
 
+    def expectation_z(self, q: int) -> float:
+        self.ensure_qubits((q,))
+        p0 = self._norm_with_projection({q: 0})
+        p1 = self._norm_with_projection({q: 1})
+        return float(p0 - p1)
+
+    def expectation_zz(self, q0: int, q1: int) -> float:
+        self.ensure_qubits((q0, q1))
+        p00 = self._norm_with_projection({q0: 0, q1: 0})
+        p01 = self._norm_with_projection({q0: 0, q1: 1})
+        p10 = self._norm_with_projection({q0: 1, q1: 0})
+        p11 = self._norm_with_projection({q0: 1, q1: 1})
+        return float(p00 - p01 - p10 + p11)
+
 
     def H_all(self, qubits=None):
         qs = qubits if qubits is not None else range(self.n_qubits)

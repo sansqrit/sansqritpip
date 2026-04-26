@@ -1,0 +1,9 @@
+# Azure-style OpenQASM 3 payload metadata.
+simulate(123, engine="sparse") {
+    q = quantum_register(123)
+    H(q[0])
+    CNOT(q[0], q[2])
+    payload = export_hardware("azure")
+    print(payload["provider"])
+    print(payload["notes"])
+}

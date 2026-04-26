@@ -1,0 +1,13 @@
+# Scenario 321: Manufacturing quality-control root-cause graph: scenario 01
+# Strategy: 10-qubit dense local blocks with safe MPS promotion for bridge gates.
+simulate(152, engine="hierarchical", block_size=10, max_bond_dim=null, cutoff=0.0, use_lookup=true) {
+    q = quantum_register(152)
+    block_A = shard("block_A", 10, 19)
+    block_B = shard("block_B", 20, 29)
+    apply_block("H", block_A)
+    apply_block("X", block_B)
+    CNOT(q[19], q[20])
+    Rz(q[21], PI / 4)
+    print("scenario", "manufacturing", hierarchical_report())
+    print("lookup", lookup_profile())
+}

@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sansqrit"
-version = "0.3.3"
-description = "Sansqrit quantum DSL by Karthik V: sparse/sharded lookup execution, hierarchical tensor shards, QEC, diagnostics, hardware exports and AI-training docs."
+version = "0.3.4"
+description = "Sansqrit quantum DSL by Karthik V with sparse/sharded lookup execution, hierarchical tensor shards, QEC, hardware exports, diagnostics, and packaged AI/ML training datasets."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
@@ -66,4 +66,4 @@ pythonpath = ["src"]
 addopts = "-q"
 
 [tool.setuptools.package-data]
-sansqrit = ["examples/*.sq", "examples/*.md", "docs/*.md", "data/*.json", "data/*.json.gz"]
+sansqrit = ["examples/*.sq", "examples/*.md", "docs/*.md", "data/*.json", "data/*.json.gz", "data/training/*.json", "data/training/*.jsonl.gz", "data/training/*.md"]

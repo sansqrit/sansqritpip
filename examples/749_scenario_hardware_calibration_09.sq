@@ -1,0 +1,11 @@
+# Scenario 449: Quantum hardware calibration export and verification: scenario 09
+# Strategy: generate a scalable sparse circuit and export the hardware payload.
+simulate(129, engine="sharded", n_shards=12, workers=4, use_lookup=true) {
+    q = quantum_register(129)
+    H(q[0])
+    CNOT(q[0], q[1])
+    X(q[128])
+    Rz(q[9], PI / 8)
+    print("scenario", "hardware_calibration", hardware_payload_summary())
+    print(export_hardware("azure"))
+}

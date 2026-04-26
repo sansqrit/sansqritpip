@@ -1,0 +1,8 @@
+simulate(5) {
+  let q = quantum_register(5)
+  let l = qec_logical("bit_flip")
+  qec_encode(l)
+  qec_inject_error(l, "X", 0)
+  let syndrome = qec_syndrome(l, ancilla_base=3)
+  let corrections = qec_correct(l, syndrome)
+}

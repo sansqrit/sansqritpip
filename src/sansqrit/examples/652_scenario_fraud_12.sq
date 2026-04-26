@@ -1,0 +1,15 @@
+# Scenario 352: Payments fraud graph screening: scenario 12
+# Strategy: sparse + sharded execution for 154 logical qubits.
+simulate(154, engine="sharded", n_shards=15, workers=4, use_lookup=true) {
+    q = quantum_register(154)
+    X(q[8])
+    X(q[37])
+    X(q[14])
+    H(q[4])
+    CNOT(q[4], q[153])
+    Rz(q[4], PI / 6)
+    CZ(q[153], q[48])
+    print("scenario", "fraud", "nnz", engine_nnz())
+    print("lookup", lookup_profile())
+    print("estimate", estimate_qubits(154))
+}

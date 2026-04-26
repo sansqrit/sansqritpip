@@ -1,0 +1,15 @@
+# Scenario 202: Genomic variant prioritization: scenario 02
+# Strategy: sparse + sharded execution for 154 logical qubits.
+simulate(154, engine="sharded", n_shards=15, workers=4, use_lookup=true) {
+    q = quantum_register(154)
+    X(q[32])
+    X(q[113])
+    X(q[152])
+    H(q[62])
+    CNOT(q[62], q[3])
+    Rz(q[62], PI / 6)
+    CZ(q[3], q[112])
+    print("scenario", "genomics", "nnz", engine_nnz())
+    print("lookup", lookup_profile())
+    print("estimate", estimate_qubits(154))
+}

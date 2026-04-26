@@ -1,0 +1,15 @@
+# Scenario 035: Smart-grid fault localization and energy routing: scenario 15
+# Strategy: sparse + sharded execution for 150 logical qubits.
+simulate(150, engine="sharded", n_shards=15, workers=4, use_lookup=true) {
+    q = quantum_register(150)
+    X(q[107])
+    X(q[34])
+    X(q[83])
+    H(q[47])
+    CNOT(q[47], q[2])
+    Rz(q[47], PI / 4)
+    CZ(q[2], q[13])
+    print("scenario", "smart_grid", "nnz", engine_nnz())
+    print("lookup", lookup_profile())
+    print("estimate", estimate_qubits(150))
+}

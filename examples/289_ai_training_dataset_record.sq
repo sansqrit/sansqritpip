@@ -1,0 +1,3 @@
+# Generate AI/ML training metadata.
+print(research_gaps())
+print("training helpers available")

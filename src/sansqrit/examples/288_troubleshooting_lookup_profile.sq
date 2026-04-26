@@ -1,0 +1,9 @@
+# Lookup and troubleshooting introspection.
+simulate(10, engine="sparse", use_lookup=true) {
+    q = quantum_register(10)
+    H(q[0])
+    SX(q[3])
+    CNOT(q[0], q[1])
+    print(lookup_profile())
+    print(lookup_architecture())
+}

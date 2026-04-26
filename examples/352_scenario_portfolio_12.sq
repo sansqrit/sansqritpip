@@ -1,0 +1,15 @@
+# Scenario 052: Portfolio risk and scenario flagging: scenario 12
+# Strategy: sparse + sharded execution for 132 logical qubits.
+simulate(132, engine="sharded", n_shards=13, workers=4, use_lookup=true) {
+    q = quantum_register(132)
+    X(q[34])
+    X(q[123])
+    X(q[4])
+    H(q[10])
+    CNOT(q[10], q[73])
+    Rz(q[10], PI / 6)
+    CZ(q[73], q[0])
+    print("scenario", "portfolio", "nnz", engine_nnz())
+    print("lookup", lookup_profile())
+    print("estimate", estimate_qubits(132))
+}

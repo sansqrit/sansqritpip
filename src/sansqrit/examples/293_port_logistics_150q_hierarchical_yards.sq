@@ -1,0 +1,11 @@
+# 150-qubit port logistics model as 15 independent 10-qubit yards.
+simulate(150, engine="hierarchical", block_size=10) {
+    q = quantum_register(150)
+    shard yard_0 [0..9]
+    shard yard_1 [10..19]
+    shard yard_2 [20..29]
+    apply H on yard_0
+    apply X on yard_1
+    apply S on yard_2
+    print(hierarchical_report())
+}

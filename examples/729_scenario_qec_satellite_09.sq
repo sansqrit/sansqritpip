@@ -1,0 +1,12 @@
+# Scenario 429: Quantum error correction for satellite links: scenario 09
+# Strategy: logical qubit QEC workflow with syndrome extraction and correction.
+simulate(27, engine="sparse", use_lookup=true) {
+    q = quantum_register(27)
+    logical = qec_logical("five_qubit", base=0, name="satellite_link_9")
+    qec_encode(logical)
+    qec_inject_error(logical, "X", 0)
+    syndrome = qec_syndrome_and_correct(logical)
+    logical_z(logical)
+    print("scenario", "qec_satellite", "code", "five_qubit", "syndrome", syndrome)
+    print("stim", qec_stim_syndrome_text(logical))
+}

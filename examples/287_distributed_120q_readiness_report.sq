@@ -1,0 +1,4 @@
+# Distributed-readiness diagnostics without requiring live workers.
+print(sansqrit_doctor())
+print(troubleshooting("distributed"))
+print(hardware_targets())

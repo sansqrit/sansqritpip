@@ -1,0 +1,10 @@
+# 144-qubit Clifford threat graph, safe for stabilizer execution.
+simulate(144, engine="stabilizer") {
+    q = quantum_register(144)
+    for i in range(0, 143, 12) {
+        H(q[i])
+        CNOT(q[i], q[i + 1])
+        CZ(q[i + 1], q[i + 2])
+    }
+    print("cyber sample", measure_all(shots=3))
+}

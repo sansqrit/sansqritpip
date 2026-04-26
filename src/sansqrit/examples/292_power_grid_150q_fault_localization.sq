@@ -1,0 +1,10 @@
+# 150-qubit grid fault localization with sparse flags.
+simulate(150, engine="sharded", n_shards=15) {
+    q = quantum_register(150)
+    X(q[5])
+    X(q[60])
+    H(q[0])
+    CNOT(q[0], q[5])
+    Rz(q[60], PI / 5)
+    print(shards())
+}

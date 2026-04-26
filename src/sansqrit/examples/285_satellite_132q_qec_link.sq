@@ -1,0 +1,10 @@
+# Satellite link QEC control plane in a larger 132-qubit sparse register.
+simulate(132, engine="sparse") {
+    q = quantum_register(132)
+    logical = qec_logical("bit_flip", base=0)
+    qec_encode(logical)
+    qec_inject_error(logical, "X", 2)
+    print(qec_syndrome_and_correct(logical, ancilla_base=3))
+    X(q[131])
+    print(engine_nnz())
+}

@@ -1,0 +1,5 @@
+let code = qec_code("five_qubit")
+let l = qec_logical("five_qubit", base=0)
+let stabs = l.stabilizers()
+let lx = l.logical_x_term()
+let lz = l.logical_z_term()

@@ -1,0 +1,5 @@
+let code = qec_code("surface", distance=5)
+let lattice = qec_surface_lattice(5)
+let data_count = len(lattice.data_qubits)
+let x_count = len(lattice.x_checks)
+let z_count = len(lattice.z_checks)

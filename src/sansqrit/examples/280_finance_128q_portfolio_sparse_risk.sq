@@ -1,0 +1,11 @@
+# 128-qubit portfolio risk flags with sparse rotations.
+simulate(128, engine="sharded", n_shards=16, workers=4) {
+    q = quantum_register(128)
+    X(q[7])
+    X(q[31])
+    X(q[88])
+    H(q[0])
+    CNOT(q[0], q[7])
+    RZZ(q[31], q[88], PI / 12)
+    print("finance plan", estimate_qubits(128))
+}
