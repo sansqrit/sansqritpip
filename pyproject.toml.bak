@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sansqrit"
-version = "0.3.3"
-description = "Sansqrit quantum DSL by Karthik V: sparse/sharded lookup execution, hierarchical tensor shards, QEC, diagnostics, hardware exports and AI-training docs."
+version = "0.3.0"
+description = "Sansqrit: a simplified quantum DSL with sparse, sharded, stabilizer, MPS, hybrid, noisy, GPU and distributed backends."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
@@ -13,9 +13,9 @@ authors = [
   {name = "Karthik V"}
 ]
 maintainers = [
-  {name = "Karthik V"}
+  {name = "Karthik V ,Supraja M & Sansqrit Contributors"}
 ]
-keywords = ["quantum", "dsl", "simulator", "sparse", "sharding", "lookup", "stabilizer", "qec", "surface-code", "tensor-network", "hierarchical-tensor", "mps", "qasm", "qiskit", "braket", "cirq", "pennylane", "education", "research", "ai-training"]
+keywords = ["quantum", "dsl", "simulator", "sparse", "stabilizer", "tensor-network", "mps", "qasm", "education", "research"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
@@ -34,7 +34,6 @@ dependencies = []
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "build>=1", "twine>=5"]
-qec = ["stim>=1.13", "pymatching>=2.1"]
 tensor = ["numpy>=1.26"]
 gpu = ["cupy-cuda12x>=13"]
 qiskit = ["qiskit>=1"]
@@ -42,13 +41,13 @@ cirq = ["cirq-core>=1.4"]
 braket = ["amazon-braket-sdk>=1.80"]
 pennylane = ["pennylane>=0.40"]
 interop = ["qiskit>=1", "cirq-core>=1.4", "amazon-braket-sdk>=1.80", "pennylane>=0.40"]
-all = ["numpy>=1.26", "qiskit>=1", "cirq-core>=1.4", "amazon-braket-sdk>=1.80", "pennylane>=0.40", "stim>=1.13", "pymatching>=2.1"]
+all = ["numpy>=1.26", "qiskit>=1", "cirq-core>=1.4", "amazon-braket-sdk>=1.80", "pennylane>=0.40"]
 
 [project.urls]
-Homepage = "https://pypi.org/project/sansqrit/"
-Documentation = "https://example.com/sansqrit/docs"
-Repository = "https://example.com/sansqrit/repo"
-Issues = "https://example.com/sansqrit/issues"
+Homepage = "https://sansqrit.com"
+Documentation = "https://github.com/sansqrit/sansqritpip"
+Repository = "https://github.com/sansqrit/sansqritpip"
+Issues = "https://github.com/sansqrit/sansqritpip"
 
 [project.scripts]
 sansqrit = "sansqrit.cli:main"
@@ -66,4 +65,4 @@ pythonpath = ["src"]
 addopts = "-q"
 
 [tool.setuptools.package-data]
-sansqrit = ["examples/*.sq", "examples/*.md", "docs/*.md", "data/*.json", "data/*.json.gz"]
+sansqrit = ["examples/*.sq", "examples/*.md", "docs/*.md"]
