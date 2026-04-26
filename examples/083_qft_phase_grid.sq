@@ -1,0 +1,11 @@
+# qft_phase_grid example 83
+simulate(7, engine="sharded", n_shards=4, workers=2) {
+    let q = quantum_register(7)
+    X(q[0])
+    X(q[2])
+    qft(q)
+    Rz(q[1], PI / 7)
+    iqft(q)
+    print(engine_nnz())
+    print(measure_all(q, shots=128))
+}

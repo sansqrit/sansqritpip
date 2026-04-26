@@ -1,0 +1,11 @@
+# Example 247: write circuits so the optimizer can cancel inverse pairs.
+simulate(4, seed=247) {
+    X(0)
+    X(0)
+    H(1)
+    H(1)
+    Rz(2, PI/8)
+    Rz(2, -PI/8)
+    print("optimizer-friendly cancellation pattern")
+    print(export_qasm3())
+}

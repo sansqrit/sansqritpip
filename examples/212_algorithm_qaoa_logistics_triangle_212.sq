@@ -1,0 +1,4 @@
+# Example 212: algorithm-level application - qaoa_logistics_triangle.
+let tag = "qaoa_logistics_triangle"
+print("running", tag)
+print(qaoa_maxcut(4, [(0,1), (1,2), (2,3), (3,0)], p=1, shots=64, seed=212))

@@ -1,0 +1,2 @@
+let result = qaoa_maxcut(4, [(0,1), (1,2), (2,3), (3,0)], p=1, shots=256)
+print(result)

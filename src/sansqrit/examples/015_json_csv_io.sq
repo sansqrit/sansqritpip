@@ -1,0 +1,4 @@
+let rows = [{"gate": "H", "qubit": 0}, {"gate": "CNOT", "qubit": 1}]
+write_json("sansqrit_example.json", {"rows": rows, "shots": 128})
+let payload = read_json("sansqrit_example.json")
+print(payload)

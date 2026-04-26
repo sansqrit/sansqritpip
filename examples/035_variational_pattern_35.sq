@@ -1,0 +1,25 @@
+# Generated variational circuit pattern 35
+simulate(3, engine="sparse") {
+    let q = quantum_register(3)
+    H_all()
+    # layer 0
+    Rz(q[0], PI / 2)
+    Rx(q[1], PI / 3)
+    Ry(q[2], PI / 4)
+    RZZ(q[0], q[1], PI / 3)
+    CNOT(q[1], q[2])
+    # layer 1
+    Rx(q[0], PI / 3)
+    Ry(q[1], PI / 4)
+    Rz(q[2], PI / 5)
+    RZZ(q[0], q[1], PI / 3)
+    CNOT(q[1], q[2])
+    # layer 2
+    Ry(q[0], PI / 4)
+    Rz(q[1], PI / 5)
+    Rx(q[2], PI / 6)
+    RZZ(q[0], q[1], PI / 3)
+    CNOT(q[1], q[2])
+    print(engine_nnz())
+    print(measure_all(q, shots=128))
+}

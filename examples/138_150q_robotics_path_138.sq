@@ -1,0 +1,15 @@
+# Example 138: 150-qubit robotics path branch marker.
+# Design rule: touch only a few sparse basis branches so this stays feasible on local hardware.
+simulate(150, engine="sharded", n_shards=16, workers=4, seed=138) {
+    let q = quantum_register(150)
+    X(q[72])
+    H(q[0])
+    CNOT(q[0], q[149])
+    CNOT(q[72], q[6])
+    Rz(q[111], PI / 18)
+    Phase(q[149], PI / 35)
+    print("robotics path branch marker")
+    print("logical_qubits", 150)
+    print("nonzero_amplitudes", engine_nnz())
+    print("sample", measure_all(q, shots=6))
+}

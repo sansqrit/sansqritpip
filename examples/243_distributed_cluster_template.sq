@@ -1,0 +1,10 @@
+# Example 243: real distributed cluster template.
+# Start workers in separate shells, then uncomment the simulate block.
+# python -m sansqrit.cluster --host 127.0.0.1 --port 9101
+# python -m sansqrit.cluster --host 127.0.0.1 --port 9102
+# simulate(12, engine="distributed", addresses=[("127.0.0.1", 9101), ("127.0.0.1", 9102)]) {
+#     H(0)
+#     CNOT(0, 11)
+#     print(measure_all(shots=4))
+# }
+print("distributed cluster template included; start workers before enabling")

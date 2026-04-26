@@ -1,0 +1,14 @@
+# Example 151: stabilizer backend for thousands-scale Clifford simulation.
+# Clifford-only circuits use tableau memory instead of dense 2^n state vectors.
+simulate(1536, engine="stabilizer", seed=151) {
+    H(453)
+    S(453)
+    CNOT(453, 470)
+    CZ(470, 566)
+    SWAP(453, 566)
+    X(470)
+    Z(566)
+    print("clifford_comm")
+    print("logical_qubits", 1536)
+    print("one_shot_prefix", list(measure_all(shots=1).keys())[0][0:32])
+}

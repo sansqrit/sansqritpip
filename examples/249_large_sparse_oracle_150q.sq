@@ -1,0 +1,11 @@
+# Example 249: 150-qubit sparse oracle-style marker.
+simulate(150, engine="sharded", n_shards=20, workers=4, seed=249) {
+    let q = quantum_register(150)
+    X(q[12])
+    X(q[77])
+    H(q[0])
+    CNOT(q[0], q[149])
+    MCZ(q[0], q[12], q[77], q[149])
+    print("150q oracle marker nnz", engine_nnz())
+    print(measure_all(q, shots=4))
+}

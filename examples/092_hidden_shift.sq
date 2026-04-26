@@ -1,0 +1,13 @@
+# hidden_shift example 92
+simulate(4, engine="sharded", n_shards=4, workers=2) {
+    let q = quantum_register(4)
+    H_all()
+    for i in range(4) {
+        Rz(q[i], PI / (i + 2))
+    }
+    for i in range(3) {
+        CNOT(q[i], q[i + 1])
+    }
+    print(engine_nnz())
+    print(measure_all(q, shots=128))
+}

@@ -1,0 +1,10 @@
+# multi_control_demo example 89
+simulate(5, engine="sharded", n_shards=4, workers=2) {
+    let q = quantum_register(5)
+    for i in range(4) {
+        X(q[i])
+    }
+    MCX(q[0], q[1], q[2], q[4])
+    print(engine_nnz())
+    print(measure_all(q, shots=128))
+}

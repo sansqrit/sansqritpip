@@ -1,0 +1,7 @@
+let xs = [1, 2, 3, 4, 5, 6]
+let squares = xs |> map(fn(x) => x * x)
+let big = squares |> filter(fn(x) => x > 10)
+let total = big |> sum
+print(squares)
+print(big)
+print(total)

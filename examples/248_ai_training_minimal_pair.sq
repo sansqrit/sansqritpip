@@ -1,0 +1,7 @@
+# Example 248: paired input-output style useful for AI training.
+# Intent: create a Bell state and return probability dictionary.
+simulate(2, seed=248) {
+    H(0)
+    CNOT(0, 1)
+    print(probabilities())
+}

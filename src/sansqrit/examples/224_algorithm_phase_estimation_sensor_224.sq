@@ -1,0 +1,4 @@
+# Example 224: algorithm-level application - phase_estimation_sensor.
+let tag = "phase_estimation_sensor"
+print("running", tag)
+print(quantum_phase_estimation(0.3125, 4, shots=64, seed=224))

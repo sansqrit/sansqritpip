@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sansqrit"
+version = "0.3.0"
+description = "Sansqrit: a simplified quantum DSL with sparse, sharded, stabilizer, MPS, hybrid, noisy, GPU and distributed backends."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [
+  {name = "Sansqrit Contributors"}
+]
+maintainers = [
+  {name = "Sansqrit Contributors"}
+]
+keywords = ["quantum", "dsl", "simulator", "sparse", "stabilizer", "tensor-network", "mps", "qasm", "education", "research"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Education",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Physics",
+  "Topic :: Software Development :: Interpreters",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "build>=1", "twine>=5"]
+tensor = ["numpy>=1.26"]
+gpu = ["cupy-cuda12x>=13"]
+qiskit = ["qiskit>=1"]
+cirq = ["cirq-core>=1.4"]
+braket = ["amazon-braket-sdk>=1.80"]
+pennylane = ["pennylane>=0.40"]
+interop = ["qiskit>=1", "cirq-core>=1.4", "amazon-braket-sdk>=1.80", "pennylane>=0.40"]
+all = ["numpy>=1.26", "qiskit>=1", "cirq-core>=1.4", "amazon-braket-sdk>=1.80", "pennylane>=0.40"]
+
+[project.urls]
+Homepage = "https://example.com/sansqrit"
+Documentation = "https://example.com/sansqrit/docs"
+Repository = "https://example.com/sansqrit/repo"
+Issues = "https://example.com/sansqrit/issues"
+
+[project.scripts]
+sansqrit = "sansqrit.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q"
+
+[tool.setuptools.package-data]
+sansqrit = ["examples/*.sq", "examples/*.md", "docs/*.md"]

@@ -1,0 +1,15 @@
+# Example 121: 150-qubit traffic routing decision bit.
+# Design rule: touch only a few sparse basis branches so this stays feasible on local hardware.
+simulate(150, engine="sharded", n_shards=16, workers=4, seed=121) {
+    let q = quantum_register(150)
+    X(q[102])
+    H(q[0])
+    CNOT(q[0], q[149])
+    CNOT(q[102], q[83])
+    Rz(q[120], PI / 17)
+    Phase(q[149], PI / 33)
+    print("traffic routing decision bit")
+    print("logical_qubits", 150)
+    print("nonzero_amplitudes", engine_nnz())
+    print("sample", measure_all(q, shots=6))
+}

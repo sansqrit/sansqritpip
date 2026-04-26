@@ -1,0 +1,7 @@
+simulate(2) {
+    let q = quantum_register(2)
+    H(q[0])
+    H(q[1])
+    RZZ(q[0], q[1], PI / 3)
+    print(probabilities(q))
+}

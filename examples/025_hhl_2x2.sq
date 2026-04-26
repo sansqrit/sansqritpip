@@ -1,0 +1,2 @@
+let result = hhl_solve([[2, 0], [0, 4]], [2, 8])
+print(result)

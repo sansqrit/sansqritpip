@@ -1,0 +1,4 @@
+# Example 218: algorithm-level application - quantum_counting_inventory.
+let tag = "quantum_counting_inventory"
+print("running", tag)
+print(quantum_counting(8, 13, 5))

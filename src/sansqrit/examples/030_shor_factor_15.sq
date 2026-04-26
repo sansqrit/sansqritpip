@@ -1,0 +1,2 @@
+let factors = shor_factor(15)
+print(factors)

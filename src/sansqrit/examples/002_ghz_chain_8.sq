@@ -1,0 +1,10 @@
+# 8-qubit GHZ state
+simulate(8, engine="sparse") {
+    let q = quantum_register(8)
+    H(q[0])
+    for i in range(7) {
+        CNOT(q[i], q[i + 1])
+    }
+    print(engine_nnz())
+    print(measure_all(q, shots=512))
+}

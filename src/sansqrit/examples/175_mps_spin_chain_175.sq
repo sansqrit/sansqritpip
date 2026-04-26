@@ -1,0 +1,13 @@
+# Example 175: MPS/tensor-network low-entanglement spin_chain.
+# Requires optional NumPy extra: pip install sansqrit[tensor].
+simulate(28, engine="mps", max_bond_dim=32, cutoff=1e-10, seed=175) {
+    let q = quantum_register(28)
+    for layer in range(4) {
+        H(q[layer % 28])
+        CNOT(q[layer % 28], q[(layer + 1) % 28])
+        Rz(q[(layer + 1) % 28], PI / (layer + 3))
+    }
+    print("spin_chain")
+    print("logical_qubits", 28)
+    print("shots", measure_all(q, shots=4))
+}

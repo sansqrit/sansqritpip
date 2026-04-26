@@ -1,0 +1,4 @@
+# Example 225: algorithm-level application - hhl_toy_linear_system.
+let tag = "hhl_toy_linear_system"
+print("running", tag)
+print(hhl_solve([[1.0, 0.0], [0.0, 2.0]], [1.0, 0.5]))

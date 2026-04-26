@@ -1,0 +1,8 @@
+# Optimizer is available from Python API; in DSL use direct simplified code.
+simulate(1, seed=1) {
+    H(0)
+    H(0)
+    Rz(0, 0.25)
+    Rz(0, -0.25)
+    print(probabilities())
+}

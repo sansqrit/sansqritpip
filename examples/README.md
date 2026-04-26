@@ -1,0 +1,256 @@
+# Sansqrit Example Corpus
+
+This directory contains 250 Sansqrit `.sq` programs. They are grouped for human learning and AI/ML training ingestion.
+
+## Index
+
+- `001_bell_state.sq` — 001 bell state
+- `002_ghz_chain_8.sq` — 002 ghz chain 8
+- `003_qft_three_qubits.sq` — 003 qft three qubits
+- `004_inverse_qft_roundtrip.sq` — 004 inverse qft roundtrip
+- `005_sharded_bell.sq` — 005 sharded bell
+- `006_threaded_superposition.sq` — 006 threaded superposition
+- `007_lookup_sx_inverse.sq` — 007 lookup sx inverse
+- `008_toffoli_adder_bit.sq` — 008 toffoli adder bit
+- `009_fredkin_swap.sq` — 009 fredkin swap
+- `010_rzz_entangler.sq` — 010 rzz entangler
+- `011_ms_gate.sq` — 011 ms gate
+- `012_qasm_export.sq` — 012 qasm export
+- `013_pipeline_statistics.sq` — 013 pipeline statistics
+- `014_classical_function.sq` — 014 classical function
+- `015_json_csv_io.sq` — 015 json csv io
+- `016_grover_search.sq` — 016 grover search
+- `017_grover_multi.sq` — 017 grover multi
+- `018_bernstein_vazirani.sq` — 018 bernstein vazirani
+- `019_deutsch_jozsa_balanced.sq` — 019 deutsch jozsa balanced
+- `020_deutsch_jozsa_constant.sq` — 020 deutsch jozsa constant
+- `021_qaoa_triangle.sq` — 021 qaoa triangle
+- `022_qaoa_square.sq` — 022 qaoa square
+- `023_vqe_h2.sq` — 023 vqe h2
+- `024_phase_estimation.sq` — 024 phase estimation
+- `025_hhl_2x2.sq` — 025 hhl 2x2
+- `026_teleport_one.sq` — 026 teleport one
+- `027_superdense_coding.sq` — 027 superdense coding
+- `028_bb84_qkd.sq` — 028 bb84 qkd
+- `029_bb84_with_eavesdropper.sq` — 029 bb84 with eavesdropper
+- `030_shor_factor_15.sq` — 030 shor factor 15
+- `031_amplitude_estimation.sq` — 031 amplitude estimation
+- `032_quantum_counting.sq` — 032 quantum counting
+- `033_variational_classifier.sq` — 033 variational classifier
+- `034_variational_pattern_34.sq` — 034 variational pattern 34
+- `035_variational_pattern_35.sq` — 035 variational pattern 35
+- `036_variational_pattern_36.sq` — 036 variational pattern 36
+- `037_variational_pattern_37.sq` — 037 variational pattern 37
+- `038_variational_pattern_38.sq` — 038 variational pattern 38
+- `039_variational_pattern_39.sq` — 039 variational pattern 39
+- `040_variational_pattern_40.sq` — 040 variational pattern 40
+- `041_variational_pattern_41.sq` — 041 variational pattern 41
+- `042_variational_pattern_42.sq` — 042 variational pattern 42
+- `043_variational_pattern_43.sq` — 043 variational pattern 43
+- `044_variational_pattern_44.sq` — 044 variational pattern 44
+- `045_variational_pattern_45.sq` — 045 variational pattern 45
+- `046_variational_pattern_46.sq` — 046 variational pattern 46
+- `047_variational_pattern_47.sq` — 047 variational pattern 47
+- `048_variational_pattern_48.sq` — 048 variational pattern 48
+- `049_variational_pattern_49.sq` — 049 variational pattern 49
+- `050_variational_pattern_50.sq` — 050 variational pattern 50
+- `051_variational_pattern_51.sq` — 051 variational pattern 51
+- `052_variational_pattern_52.sq` — 052 variational pattern 52
+- `053_variational_pattern_53.sq` — 053 variational pattern 53
+- `054_variational_pattern_54.sq` — 054 variational pattern 54
+- `055_variational_pattern_55.sq` — 055 variational pattern 55
+- `056_variational_pattern_56.sq` — 056 variational pattern 56
+- `057_variational_pattern_57.sq` — 057 variational pattern 57
+- `058_variational_pattern_58.sq` — 058 variational pattern 58
+- `059_variational_pattern_59.sq` — 059 variational pattern 59
+- `060_variational_pattern_60.sq` — 060 variational pattern 60
+- `061_variational_pattern_61.sq` — 061 variational pattern 61
+- `062_variational_pattern_62.sq` — 062 variational pattern 62
+- `063_variational_pattern_63.sq` — 063 variational pattern 63
+- `064_variational_pattern_64.sq` — 064 variational pattern 64
+- `065_variational_pattern_65.sq` — 065 variational pattern 65
+- `066_variational_pattern_66.sq` — 066 variational pattern 66
+- `067_variational_pattern_67.sq` — 067 variational pattern 67
+- `068_variational_pattern_68.sq` — 068 variational pattern 68
+- `069_variational_pattern_69.sq` — 069 variational pattern 69
+- `070_variational_pattern_70.sq` — 070 variational pattern 70
+- `071_phase_kickback.sq` — 071 phase kickback
+- `072_hidden_shift.sq` — 072 hidden shift
+- `073_qft_phase_grid.sq` — 073 qft phase grid
+- `074_entangled_ladder.sq` — 074 entangled ladder
+- `075_hardware_efficient_ansatz.sq` — 075 hardware efficient ansatz
+- `076_maxcut_ansatz.sq` — 076 maxcut ansatz
+- `077_qml_feature_map.sq` — 077 qml feature map
+- `078_controlled_rotation_bank.sq` — 078 controlled rotation bank
+- `079_multi_control_demo.sq` — 079 multi control demo
+- `080_sparse_large_index.sq` — 080 sparse large index
+- `081_phase_kickback.sq` — 081 phase kickback
+- `082_hidden_shift.sq` — 082 hidden shift
+- `083_qft_phase_grid.sq` — 083 qft phase grid
+- `084_entangled_ladder.sq` — 084 entangled ladder
+- `085_hardware_efficient_ansatz.sq` — 085 hardware efficient ansatz
+- `086_maxcut_ansatz.sq` — 086 maxcut ansatz
+- `087_qml_feature_map.sq` — 087 qml feature map
+- `088_controlled_rotation_bank.sq` — 088 controlled rotation bank
+- `089_multi_control_demo.sq` — 089 multi control demo
+- `090_sparse_large_index.sq` — 090 sparse large index
+- `091_phase_kickback.sq` — 091 phase kickback
+- `092_hidden_shift.sq` — 092 hidden shift
+- `093_qft_phase_grid.sq` — 093 qft phase grid
+- `094_entangled_ladder.sq` — 094 entangled ladder
+- `095_hardware_efficient_ansatz.sq` — 095 hardware efficient ansatz
+- `096_maxcut_ansatz.sq` — 096 maxcut ansatz
+- `097_qml_feature_map.sq` — 097 qml feature map
+- `098_controlled_rotation_bank.sq` — 098 controlled rotation bank
+- `099_multi_control_demo.sq` — 099 multi control demo
+- `100_sparse_large_index.sq` — 100 sparse large index
+- `101_stabilizer_ghz_1000.sq` — 101 stabilizer ghz 1000
+- `102_mps_low_entanglement_chain.sq` — 102 mps low entanglement chain
+- `103_density_depolarizing_noise.sq` — 103 density depolarizing noise
+- `104_density_amplitude_damping.sq` — 104 density amplitude damping
+- `105_hybrid_backend_selection.sq` — 105 hybrid backend selection
+- `106_optimizer_cancel_rotations.sq` — 106 optimizer cancel rotations
+- `107_gpu_backend_small.sq` — 107 gpu backend small
+- `108_qiskit_interop_reference.sq` — 108 qiskit interop reference
+- `109_large_sparse_150_qubits.sq` — 109 large sparse 150 qubits
+- `110_mps_qft_lite.sq` — 110 mps qft lite
+- `111_150q_sensor_fusion_111.sq` — 111 150q sensor fusion 111
+- `112_150q_satellite_telemetry_112.sq` — 112 150q satellite telemetry 112
+- `113_150q_network_intrusion_113.sq` — 113 150q network intrusion 113
+- `114_150q_portfolio_risk_114.sq` — 114 150q portfolio risk 114
+- `115_150q_drug_screening_115.sq` — 115 150q drug screening 115
+- `116_150q_battery_material_116.sq` — 116 150q battery material 116
+- `117_150q_smart_grid_117.sq` — 117 150q smart grid 117
+- `118_150q_robotics_path_118.sq` — 118 150q robotics path 118
+- `119_150q_climate_event_119.sq` — 119 150q climate event 119
+- `120_150q_factory_quality_120.sq` — 120 150q factory quality 120
+- `121_150q_traffic_routing_121.sq` — 121 150q traffic routing 121
+- `122_150q_fraud_detection_122.sq` — 122 150q fraud detection 122
+- `123_150q_genomics_variant_123.sq` — 123 150q genomics variant 123
+- `124_150q_seismic_monitor_124.sq` — 124 150q seismic monitor 124
+- `125_150q_iot_edge_125.sq` — 125 150q iot edge 125
+- `126_150q_cyber_key_health_126.sq` — 126 150q cyber key health 126
+- `127_150q_medical_triage_127.sq` — 127 150q medical triage 127
+- `128_150q_supply_chain_128.sq` — 128 150q supply chain 128
+- `129_150q_water_network_129.sq` — 129 150q water network 129
+- `130_150q_energy_market_130.sq` — 130 150q energy market 130
+- `131_150q_sensor_fusion_131.sq` — 131 150q sensor fusion 131
+- `132_150q_satellite_telemetry_132.sq` — 132 150q satellite telemetry 132
+- `133_150q_network_intrusion_133.sq` — 133 150q network intrusion 133
+- `134_150q_portfolio_risk_134.sq` — 134 150q portfolio risk 134
+- `135_150q_drug_screening_135.sq` — 135 150q drug screening 135
+- `136_150q_battery_material_136.sq` — 136 150q battery material 136
+- `137_150q_smart_grid_137.sq` — 137 150q smart grid 137
+- `138_150q_robotics_path_138.sq` — 138 150q robotics path 138
+- `139_150q_climate_event_139.sq` — 139 150q climate event 139
+- `140_150q_factory_quality_140.sq` — 140 150q factory quality 140
+- `141_stabilizer_clifford_comm_141.sq` — 141 stabilizer clifford comm 141
+- `142_stabilizer_graph_state_142.sq` — 142 stabilizer graph state 142
+- `143_stabilizer_cluster_state_143.sq` — 143 stabilizer cluster state 143
+- `144_stabilizer_parity_monitor_144.sq` — 144 stabilizer parity monitor 144
+- `145_stabilizer_surface_code_syndrome_145.sq` — 145 stabilizer surface code syndrome 145
+- `146_stabilizer_clifford_comm_146.sq` — 146 stabilizer clifford comm 146
+- `147_stabilizer_graph_state_147.sq` — 147 stabilizer graph state 147
+- `148_stabilizer_cluster_state_148.sq` — 148 stabilizer cluster state 148
+- `149_stabilizer_parity_monitor_149.sq` — 149 stabilizer parity monitor 149
+- `150_stabilizer_surface_code_syndrome_150.sq` — 150 stabilizer surface code syndrome 150
+- `151_stabilizer_clifford_comm_151.sq` — 151 stabilizer clifford comm 151
+- `152_stabilizer_graph_state_152.sq` — 152 stabilizer graph state 152
+- `153_stabilizer_cluster_state_153.sq` — 153 stabilizer cluster state 153
+- `154_stabilizer_parity_monitor_154.sq` — 154 stabilizer parity monitor 154
+- `155_stabilizer_surface_code_syndrome_155.sq` — 155 stabilizer surface code syndrome 155
+- `156_stabilizer_clifford_comm_156.sq` — 156 stabilizer clifford comm 156
+- `157_stabilizer_graph_state_157.sq` — 157 stabilizer graph state 157
+- `158_stabilizer_cluster_state_158.sq` — 158 stabilizer cluster state 158
+- `159_stabilizer_parity_monitor_159.sq` — 159 stabilizer parity monitor 159
+- `160_stabilizer_surface_code_syndrome_160.sq` — 160 stabilizer surface code syndrome 160
+- `161_stabilizer_clifford_comm_161.sq` — 161 stabilizer clifford comm 161
+- `162_stabilizer_graph_state_162.sq` — 162 stabilizer graph state 162
+- `163_stabilizer_cluster_state_163.sq` — 163 stabilizer cluster state 163
+- `164_stabilizer_parity_monitor_164.sq` — 164 stabilizer parity monitor 164
+- `165_stabilizer_surface_code_syndrome_165.sq` — 165 stabilizer surface code syndrome 165
+- `166_mps_adiabatic_line_166.sq` — 166 mps adiabatic line 166
+- `167_mps_qft_lite_167.sq` — 167 mps qft lite 167
+- `168_mps_bond_dimension_probe_168.sq` — 168 mps bond dimension probe 168
+- `169_mps_matrix_product_feature_map_169.sq` — 169 mps matrix product feature map 169
+- `170_mps_spin_chain_170.sq` — 170 mps spin chain 170
+- `171_mps_adiabatic_line_171.sq` — 171 mps adiabatic line 171
+- `172_mps_qft_lite_172.sq` — 172 mps qft lite 172
+- `173_mps_bond_dimension_probe_173.sq` — 173 mps bond dimension probe 173
+- `174_mps_matrix_product_feature_map_174.sq` — 174 mps matrix product feature map 174
+- `175_mps_spin_chain_175.sq` — 175 mps spin chain 175
+- `176_mps_adiabatic_line_176.sq` — 176 mps adiabatic line 176
+- `177_mps_qft_lite_177.sq` — 177 mps qft lite 177
+- `178_mps_bond_dimension_probe_178.sq` — 178 mps bond dimension probe 178
+- `179_mps_matrix_product_feature_map_179.sq` — 179 mps matrix product feature map 179
+- `180_mps_spin_chain_180.sq` — 180 mps spin chain 180
+- `181_mps_adiabatic_line_181.sq` — 181 mps adiabatic line 181
+- `182_mps_qft_lite_182.sq` — 182 mps qft lite 182
+- `183_mps_bond_dimension_probe_183.sq` — 183 mps bond dimension probe 183
+- `184_mps_matrix_product_feature_map_184.sq` — 184 mps matrix product feature map 184
+- `185_mps_spin_chain_185.sq` — 185 mps spin chain 185
+- `186_mps_adiabatic_line_186.sq` — 186 mps adiabatic line 186
+- `187_mps_qft_lite_187.sq` — 187 mps qft lite 187
+- `188_mps_bond_dimension_probe_188.sq` — 188 mps bond dimension probe 188
+- `189_mps_matrix_product_feature_map_189.sq` — 189 mps matrix product feature map 189
+- `190_mps_spin_chain_190.sq` — 190 mps spin chain 190
+- `191_noise_readout_channel_191.sq` — 191 noise readout channel 191
+- `192_noise_amplitude_decay_192.sq` — 192 noise amplitude decay 192
+- `193_noise_phase_noise_193.sq` — 193 noise phase noise 193
+- `194_noise_depolarizing_benchmark_194.sq` — 194 noise depolarizing benchmark 194
+- `195_noise_noisy_bell_195.sq` — 195 noise noisy bell 195
+- `196_noise_readout_channel_196.sq` — 196 noise readout channel 196
+- `197_noise_amplitude_decay_197.sq` — 197 noise amplitude decay 197
+- `198_noise_phase_noise_198.sq` — 198 noise phase noise 198
+- `199_noise_depolarizing_benchmark_199.sq` — 199 noise depolarizing benchmark 199
+- `200_noise_noisy_bell_200.sq` — 200 noise noisy bell 200
+- `201_noise_readout_channel_201.sq` — 201 noise readout channel 201
+- `202_noise_amplitude_decay_202.sq` — 202 noise amplitude decay 202
+- `203_noise_phase_noise_203.sq` — 203 noise phase noise 203
+- `204_noise_depolarizing_benchmark_204.sq` — 204 noise depolarizing benchmark 204
+- `205_noise_noisy_bell_205.sq` — 205 noise noisy bell 205
+- `206_noise_readout_channel_206.sq` — 206 noise readout channel 206
+- `207_noise_amplitude_decay_207.sq` — 207 noise amplitude decay 207
+- `208_noise_phase_noise_208.sq` — 208 noise phase noise 208
+- `209_noise_depolarizing_benchmark_209.sq` — 209 noise depolarizing benchmark 209
+- `210_noise_noisy_bell_210.sq` — 210 noise noisy bell 210
+- `211_algorithm_grover_cyber_signature_211.sq` — 211 algorithm grover cyber signature 211
+- `212_algorithm_qaoa_logistics_triangle_212.sq` — 212 algorithm qaoa logistics triangle 212
+- `213_algorithm_vqe_molecule_scan_213.sq` — 213 algorithm vqe molecule scan 213
+- `214_algorithm_phase_estimation_sensor_214.sq` — 214 algorithm phase estimation sensor 214
+- `215_algorithm_hhl_toy_linear_system_215.sq` — 215 algorithm hhl toy linear system 215
+- `216_algorithm_bernstein_vazirani_secret_216.sq` — 216 algorithm bernstein vazirani secret 216
+- `217_algorithm_deutsch_jozsa_balanced_217.sq` — 217 algorithm deutsch jozsa balanced 217
+- `218_algorithm_quantum_counting_inventory_218.sq` — 218 algorithm quantum counting inventory 218
+- `219_algorithm_amplitude_estimation_risk_219.sq` — 219 algorithm amplitude estimation risk 219
+- `220_algorithm_bb84_key_distribution_220.sq` — 220 algorithm bb84 key distribution 220
+- `221_algorithm_grover_cyber_signature_221.sq` — 221 algorithm grover cyber signature 221
+- `222_algorithm_qaoa_logistics_triangle_222.sq` — 222 algorithm qaoa logistics triangle 222
+- `223_algorithm_vqe_molecule_scan_223.sq` — 223 algorithm vqe molecule scan 223
+- `224_algorithm_phase_estimation_sensor_224.sq` — 224 algorithm phase estimation sensor 224
+- `225_algorithm_hhl_toy_linear_system_225.sq` — 225 algorithm hhl toy linear system 225
+- `226_algorithm_bernstein_vazirani_secret_226.sq` — 226 algorithm bernstein vazirani secret 226
+- `227_algorithm_deutsch_jozsa_balanced_227.sq` — 227 algorithm deutsch jozsa balanced 227
+- `228_algorithm_quantum_counting_inventory_228.sq` — 228 algorithm quantum counting inventory 228
+- `229_algorithm_amplitude_estimation_risk_229.sq` — 229 algorithm amplitude estimation risk 229
+- `230_algorithm_bb84_key_distribution_230.sq` — 230 algorithm bb84 key distribution 230
+- `231_qml_feature_map_231.sq` — 231 qml feature map 231
+- `232_qml_feature_map_232.sq` — 232 qml feature map 232
+- `233_qml_feature_map_233.sq` — 233 qml feature map 233
+- `234_qml_feature_map_234.sq` — 234 qml feature map 234
+- `235_qml_feature_map_235.sq` — 235 qml feature map 235
+- `236_qml_feature_map_236.sq` — 236 qml feature map 236
+- `237_qml_feature_map_237.sq` — 237 qml feature map 237
+- `238_qml_feature_map_238.sq` — 238 qml feature map 238
+- `239_qml_feature_map_239.sq` — 239 qml feature map 239
+- `240_qml_feature_map_240.sq` — 240 qml feature map 240
+- `241_qasm3_export_climate_circuit.sq` — 241 qasm3 export climate circuit
+- `242_qasm2_export_network_circuit.sq` — 242 qasm2 export network circuit
+- `243_distributed_cluster_template.sq` — 243 distributed cluster template
+- `244_gpu_cuda_template.sq` — 244 gpu cuda template
+- `245_hybrid_backend_template.sq` — 245 hybrid backend template
+- `246_formal_verification_qasm_reference.sq` — 246 formal verification qasm reference
+- `247_optimizer_cancel_pairs.sq` — 247 optimizer cancel pairs
+- `248_ai_training_minimal_pair.sq` — 248 ai training minimal pair
+- `249_large_sparse_oracle_150q.sq` — 249 large sparse oracle 150q
+- `250_large_stabilizer_4096q.sq` — 250 large stabilizer 4096q

@@ -1,0 +1,10 @@
+# Low-entanglement MPS chain with small bond dimension.
+simulate(32, engine="mps", max_bond_dim=32, seed=3) {
+    for i in range(0, 32) {
+        Ry(i, 0.1)
+    }
+    for i in range(0, 31) {
+        CNOT(i, i + 1)
+    }
+    print(measure_all(shots=16))
+}

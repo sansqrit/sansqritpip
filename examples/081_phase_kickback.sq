@@ -1,0 +1,11 @@
+# phase_kickback example 81
+simulate(5, engine="sharded", n_shards=4, workers=2) {
+    let q = quantum_register(5)
+    X(q[0])
+    H_all()
+    for i in range(4) {
+        CP(q[i + 1], q[0], PI / (i + 2))
+    }
+    print(engine_nnz())
+    print(measure_all(q, shots=128))
+}

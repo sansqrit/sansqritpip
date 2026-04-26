@@ -1,0 +1,8 @@
+# Example 244: GPU/CuPy backend template.
+# Install CUDA/CuPy extra, then uncomment.
+# simulate(6, engine="gpu", seed=244) {
+#     H(0)
+#     CNOT(0, 5)
+#     print(measure_all(shots=8))
+# }
+print("GPU template included; requires sansqrit[gpu] and CUDA")

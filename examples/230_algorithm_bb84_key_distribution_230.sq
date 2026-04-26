@@ -1,0 +1,4 @@
+# Example 230: algorithm-level application - bb84_key_distribution.
+let tag = "bb84_key_distribution"
+print("running", tag)
+print(bb84_qkd(16, seed=230))

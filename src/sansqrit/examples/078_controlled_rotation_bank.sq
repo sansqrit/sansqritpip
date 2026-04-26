@@ -1,0 +1,11 @@
+# controlled_rotation_bank example 78
+simulate(6, engine="sharded", n_shards=4, workers=2) {
+    let q = quantum_register(6)
+    H(q[0])
+    for i in range(1, 6) {
+        CRz(q[0], q[i], PI / (i + 1))
+        CRx(q[0], q[i], PI / (i + 2))
+    }
+    print(engine_nnz())
+    print(measure_all(q, shots=128))
+}

@@ -1,0 +1,10 @@
+# Example 193: density-matrix/noise model phase_noise.
+simulate(2, engine="density", seed=193) {
+    let q = quantum_register(2)
+    H(q[0])
+    CNOT(q[0], q[1])
+    noise_phase_flip(q[0], 0.040)
+    print("phase_noise")
+    print("probabilities", probabilities(q))
+    print("shots", measure_all(q, shots=16))
+}

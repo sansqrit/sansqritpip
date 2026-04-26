@@ -1,0 +1,8 @@
+# Hybrid chooses stabilizer for Clifford circuits and sparse/MPS otherwise.
+simulate(4, engine="stabilizer", seed=11) {
+    H(0)
+    CNOT(0, 1)
+    CNOT(1, 2)
+    CNOT(2, 3)
+    print(measure_all(shots=8))
+}

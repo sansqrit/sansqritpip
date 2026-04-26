@@ -1,0 +1,6 @@
+# Amplitude damping drives |1> toward |0>.
+simulate(1, engine="density", seed=5) {
+    X(0)
+    noise_amplitude_damping(0, 0.30)
+    print(probabilities())
+}

@@ -1,0 +1,14 @@
+# qml_feature_map example 87
+simulate(7, engine="sharded", n_shards=4, workers=2) {
+    let q = quantum_register(7)
+    let x = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7][: 7]
+    for i in range(7) {
+        H(q[i])
+        Rz(q[i], x[i])
+    }
+    for i in range(6) {
+        RZZ(q[i], q[i + 1], x[i] * x[i + 1])
+    }
+    print(engine_nnz())
+    print(measure_all(q, shots=128))
+}

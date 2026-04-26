@@ -1,0 +1,15 @@
+# Example 115: 150-qubit drug candidate sparse oracle marker.
+# Design rule: touch only a few sparse basis branches so this stays feasible on local hardware.
+simulate(150, engine="sharded", n_shards=16, workers=4, seed=115) {
+    let q = quantum_register(150)
+    X(q[60])
+    H(q[0])
+    CNOT(q[0], q[149])
+    CNOT(q[60], q[5])
+    Rz(q[18], PI / 19)
+    Phase(q[149], PI / 32)
+    print("drug candidate sparse oracle marker")
+    print("logical_qubits", 150)
+    print("nonzero_amplitudes", engine_nnz())
+    print("sample", measure_all(q, shots=6))
+}

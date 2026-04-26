@@ -1,0 +1,15 @@
+# Example 239: quantum ML feature map for tabular/scientific data.
+let features = [0.12, 0.31, 0.07, 0.44, 0.23, 0.19, 0.27, 0.39]
+simulate(8, engine="sparse", seed=239) {
+    let q = quantum_register(8)
+    for i in range(8) {
+        Ry(q[i], features[i] * PI)
+        Rz(q[i], features[8-1-i] * PI / 2)
+    }
+    for i in range(8-1) {
+        CNOT(q[i], q[i + 1])
+    }
+    print("qml_feature_map")
+    print("nnz", engine_nnz())
+    print(measure_all(q, shots=16))
+}

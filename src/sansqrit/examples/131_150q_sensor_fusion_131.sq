@@ -1,0 +1,15 @@
+# Example 131: 150-qubit real-time sensor fusion anomaly flag.
+# Design rule: touch only a few sparse basis branches so this stays feasible on local hardware.
+simulate(150, engine="sharded", n_shards=16, workers=4, seed=131) {
+    let q = quantum_register(150)
+    X(q[23])
+    H(q[0])
+    CNOT(q[0], q[149])
+    CNOT(q[23], q[64])
+    Rz(q[141], PI / 19)
+    Phase(q[149], PI / 33)
+    print("real-time sensor fusion anomaly flag")
+    print("logical_qubits", 150)
+    print("nonzero_amplitudes", engine_nnz())
+    print("sample", measure_all(q, shots=6))
+}

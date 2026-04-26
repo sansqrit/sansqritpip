@@ -1,0 +1,4 @@
+# Example 227: algorithm-level application - deutsch_jozsa_balanced.
+let tag = "deutsch_jozsa_balanced"
+print("running", tag)
+print(deutsch_jozsa(5, "balanced", seed=227))

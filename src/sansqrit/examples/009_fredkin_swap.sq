@@ -1,0 +1,7 @@
+simulate(3) {
+    let q = quantum_register(3)
+    X(q[0])
+    X(q[1])
+    Fredkin(q[0], q[1], q[2])
+    print(probabilities(q))
+}

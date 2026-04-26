@@ -1,0 +1,7 @@
+# Interop is primarily Python API: sansqrit.interop.to_qiskit(Circuit(...)).
+# DSL can still export QASM for external tools.
+simulate(2, seed=2) {
+    H(0)
+    CNOT(0, 1)
+    print(export_qasm3())
+}

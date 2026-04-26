@@ -1,0 +1,2 @@
+let key = bb84_qkd(24, eavesdropper=true)
+print(key)

@@ -1,0 +1,13 @@
+# Example 178: MPS/tensor-network low-entanglement bond_dimension_probe.
+# Requires optional NumPy extra: pip install sansqrit[tensor].
+simulate(40, engine="mps", max_bond_dim=32, cutoff=1e-10, seed=178) {
+    let q = quantum_register(40)
+    for layer in range(4) {
+        H(q[layer % 40])
+        CNOT(q[layer % 40], q[(layer + 1) % 40])
+        Rz(q[(layer + 1) % 40], PI / (layer + 3))
+    }
+    print("bond_dimension_probe")
+    print("logical_qubits", 40)
+    print("shots", measure_all(q, shots=4))
+}

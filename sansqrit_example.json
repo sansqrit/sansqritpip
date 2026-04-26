@@ -1,0 +1,13 @@
+{
+  "rows": [
+    {
+      "gate": "H",
+      "qubit": 0
+    },
+    {
+      "gate": "CNOT",
+      "qubit": 1
+    }
+  ],
+  "shots": 128
+}

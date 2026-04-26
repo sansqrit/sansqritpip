@@ -1,0 +1,7 @@
+# Example 246: verification through QASM export / external SDK comparison.
+simulate(3, seed=246) {
+    H(0)
+    CNOT(0, 1)
+    CNOT(1, 2)
+    print(export_qasm3())
+}

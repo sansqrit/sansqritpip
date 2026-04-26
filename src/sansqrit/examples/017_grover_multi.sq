@@ -1,0 +1,2 @@
+let result = grover_search_multi(4, [3, 12], shots=512)
+print(result)

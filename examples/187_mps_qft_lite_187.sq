@@ -1,0 +1,13 @@
+# Example 187: MPS/tensor-network low-entanglement qft_lite.
+# Requires optional NumPy extra: pip install sansqrit[tensor].
+simulate(44, engine="mps", max_bond_dim=32, cutoff=1e-10, seed=187) {
+    let q = quantum_register(44)
+    for layer in range(4) {
+        H(q[layer % 44])
+        CNOT(q[layer % 44], q[(layer + 1) % 44])
+        Rz(q[(layer + 1) % 44], PI / (layer + 3))
+    }
+    print("qft_lite")
+    print("logical_qubits", 44)
+    print("shots", measure_all(q, shots=4))
+}

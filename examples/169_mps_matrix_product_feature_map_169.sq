@@ -1,0 +1,13 @@
+# Example 169: MPS/tensor-network low-entanglement matrix_product_feature_map.
+# Requires optional NumPy extra: pip install sansqrit[tensor].
+simulate(36, engine="mps", max_bond_dim=32, cutoff=1e-10, seed=169) {
+    let q = quantum_register(36)
+    for layer in range(4) {
+        H(q[layer % 36])
+        CNOT(q[layer % 36], q[(layer + 1) % 36])
+        Rz(q[(layer + 1) % 36], PI / (layer + 3))
+    }
+    print("matrix_product_feature_map")
+    print("logical_qubits", 36)
+    print("shots", measure_all(q, shots=4))
+}

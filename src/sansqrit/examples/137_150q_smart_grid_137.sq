@@ -1,0 +1,15 @@
+# Example 137: 150-qubit smart grid load-balancing state flag.
+# Design rule: touch only a few sparse basis branches so this stays feasible on local hardware.
+simulate(150, engine="sharded", n_shards=16, workers=4, seed=137) {
+    let q = quantum_register(150)
+    X(q[65])
+    H(q[0])
+    CNOT(q[0], q[149])
+    CNOT(q[65], q[142])
+    Rz(q[94], PI / 17)
+    Phase(q[149], PI / 34)
+    print("smart grid load-balancing state flag")
+    print("logical_qubits", 150)
+    print("nonzero_amplitudes", engine_nnz())
+    print("sample", measure_all(q, shots=6))
+}

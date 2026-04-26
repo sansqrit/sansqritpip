@@ -1,0 +1,8 @@
+# 150 logical qubits with sparse state. Avoid H_all on all 150 unless you expect expansion.
+simulate(150, engine="sparse", seed=9) {
+    X(149)
+    H(0)
+    CNOT(0, 149)
+    print(engine_nnz())
+    print(measure_all(shots=8))
+}

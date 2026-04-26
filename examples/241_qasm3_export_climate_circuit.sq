@@ -1,0 +1,7 @@
+# Example 241: export a climate-risk sparse circuit to OpenQASM 3.
+simulate(5, seed=241) {
+    H(0)
+    CNOT(0, 4)
+    Rz(3, PI/7)
+    print(export_qasm3())
+}

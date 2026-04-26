@@ -1,0 +1,8 @@
+# Density-matrix noisy Bell state with depolarizing noise.
+simulate(2, engine="density", seed=5) {
+    H(0)
+    CNOT(0, 1)
+    noise_depolarize(0, 0.05)
+    noise_depolarize(1, 0.05)
+    print(probabilities())
+}

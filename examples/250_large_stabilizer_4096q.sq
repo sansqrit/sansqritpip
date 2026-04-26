@@ -1,0 +1,9 @@
+# Example 250: 4096-qubit Clifford/stabilizer monitoring pattern.
+simulate(4096, engine="stabilizer", seed=250) {
+    H(0)
+    CNOT(0, 4095)
+    S(2048)
+    CZ(2048, 4095)
+    print("4096-qubit stabilizer circuit")
+    print(list(measure_all(shots=1).keys())[0][0:64])
+}

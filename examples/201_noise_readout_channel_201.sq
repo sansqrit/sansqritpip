@@ -1,0 +1,10 @@
+# Example 201: density-matrix/noise model readout_channel.
+simulate(2, engine="density", seed=201) {
+    let q = quantum_register(2)
+    H(q[0])
+    CNOT(q[0], q[1])
+    noise_bit_flip(q[1], 0.020)
+    print("readout_channel")
+    print("probabilities", probabilities(q))
+    print("shots", measure_all(q, shots=16))
+}

@@ -1,0 +1,6 @@
+# Small QFT-style tensor run. For large QFT, bond growth may require high max_bond_dim.
+simulate(8, engine="mps", max_bond_dim=64, seed=4) {
+    X(0)
+    qft()
+    print(measure_all(shots=16))
+}

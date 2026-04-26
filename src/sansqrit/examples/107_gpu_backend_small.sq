@@ -1,0 +1,8 @@
+# GPU backend syntax reference. Uncomment the simulate block after installing sansqrit[gpu].
+# simulate(3, engine="gpu", seed=1) {
+#     H(0)
+#     CNOT(0, 1)
+#     Rz(2, 0.4)
+#     print(measure_all(shots=8))
+# }
+print("GPU example: install sansqrit[gpu], then uncomment the simulate block.")

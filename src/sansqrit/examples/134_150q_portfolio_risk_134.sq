@@ -1,0 +1,15 @@
+# Example 134: 150-qubit portfolio risk qubit flagging.
+# Design rule: touch only a few sparse basis branches so this stays feasible on local hardware.
+simulate(150, engine="sharded", n_shards=16, workers=4, seed=134) {
+    let q = quantum_register(150)
+    X(q[44])
+    H(q[0])
+    CNOT(q[0], q[149])
+    CNOT(q[44], q[103])
+    Rz(q[43], PI / 22)
+    Phase(q[149], PI / 36)
+    print("portfolio risk qubit flagging")
+    print("logical_qubits", 150)
+    print("nonzero_amplitudes", engine_nnz())
+    print("sample", measure_all(q, shots=6))
+}

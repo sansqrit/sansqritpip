@@ -1,0 +1,4 @@
+# Example 211: algorithm-level application - grover_cyber_signature.
+let tag = "grover_cyber_signature"
+print("running", tag)
+print(grover_search(5, 17, shots=64, seed=211))

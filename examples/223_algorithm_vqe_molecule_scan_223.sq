@@ -1,0 +1,4 @@
+# Example 223: algorithm-level application - vqe_molecule_scan.
+let tag = "vqe_molecule_scan"
+print("running", tag)
+print(vqe_h2(0.735, max_iter=16, seed=223))

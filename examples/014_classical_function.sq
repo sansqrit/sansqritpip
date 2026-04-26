@@ -1,0 +1,6 @@
+fn energy(theta) {
+    return -cos(theta) + 0.1 * sin(2 * theta)
+}
+let values = [energy(x * PI / 16) for x in range(16)]
+print(values)
+print(min(values))

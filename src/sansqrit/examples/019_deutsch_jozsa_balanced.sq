@@ -1,0 +1,2 @@
+let result = deutsch_jozsa(4, "balanced")
+print(result)

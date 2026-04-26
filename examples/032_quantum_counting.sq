@@ -1,0 +1,2 @@
+let estimate = quantum_counting(6, 7, 5)
+print(estimate)

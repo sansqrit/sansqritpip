@@ -1,0 +1,8 @@
+# 1000-qubit Clifford GHZ smoke test; exact tableau, no dense expansion.
+simulate(1000, engine="stabilizer", seed=7) {
+    H(0)
+    for i in range(0, 999) {
+        CNOT(i, i + 1)
+    }
+    print(measure_all(shots=8))
+}

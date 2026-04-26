@@ -1,0 +1,6 @@
+simulate(3) {
+    let q = quantum_register(3)
+    X(q[0])
+    qft(q)
+    print(probabilities(q))
+}

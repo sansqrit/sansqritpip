@@ -1,0 +1,15 @@
+# Example 122: 150-qubit fraud detection sparse score marker.
+# Design rule: touch only a few sparse basis branches so this stays feasible on local hardware.
+simulate(150, engine="sharded", n_shards=16, workers=4, seed=122) {
+    let q = quantum_register(150)
+    X(q[109])
+    H(q[0])
+    CNOT(q[0], q[149])
+    CNOT(q[109], q[96])
+    Rz(q[137], PI / 18)
+    Phase(q[149], PI / 34)
+    print("fraud detection sparse score marker")
+    print("logical_qubits", 150)
+    print("nonzero_amplitudes", engine_nnz())
+    print("sample", measure_all(q, shots=6))
+}

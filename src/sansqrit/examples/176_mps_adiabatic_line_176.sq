@@ -1,0 +1,13 @@
+# Example 176: MPS/tensor-network low-entanglement adiabatic_line.
+# Requires optional NumPy extra: pip install sansqrit[tensor].
+simulate(32, engine="mps", max_bond_dim=32, cutoff=1e-10, seed=176) {
+    let q = quantum_register(32)
+    for layer in range(5) {
+        H(q[layer % 32])
+        CNOT(q[layer % 32], q[(layer + 1) % 32])
+        Rz(q[(layer + 1) % 32], PI / (layer + 3))
+    }
+    print("adiabatic_line")
+    print("logical_qubits", 32)
+    print("shots", measure_all(q, shots=4))
+}

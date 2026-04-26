@@ -1,0 +1,7 @@
+# Example 245: hybrid backend selection template.
+simulate(150, engine="sharded", n_shards=12, seed=245) {
+    X(149)
+    H(0)
+    CNOT(0, 149)
+    print("hybrid-style sparse branch", engine_nnz())
+}

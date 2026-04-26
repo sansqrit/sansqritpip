@@ -1,0 +1,15 @@
+# Generated variational circuit pattern 51
+simulate(4, engine="sparse") {
+    let q = quantum_register(4)
+    H_all()
+    # layer 0
+    Rx(q[0], PI / 4)
+    Ry(q[1], PI / 5)
+    Rz(q[2], PI / 6)
+    Rx(q[3], PI / 7)
+    RZZ(q[0], q[1], PI / 4)
+    CNOT(q[1], q[2])
+    RZZ(q[2], q[3], PI / 6)
+    print(engine_nnz())
+    print(measure_all(q, shots=128))
+}
