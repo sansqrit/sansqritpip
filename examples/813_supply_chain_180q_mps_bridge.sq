@@ -1,0 +1,3 @@
+# 180-qubit supply-chain chain with limited bridges; planner should prefer MPS/hierarchical
+ops = [("H", [9], []), ("CNOT", [9,10], []), ("CNOT", [19,20], []), ("Rz", [55], [0.01])]
+print(explain_backend(180, ops))

@@ -1,0 +1,10 @@
+# 120-qubit sparse IoT anomaly circuit with adaptive backend explanation
+simulate(120, engine="auto") {
+    q = quantum_register(120)
+    X(q[119])
+    H(q[0])
+    CNOT(q[0], q[1])
+    Rz(q[50], PI/8)
+    print(explain_backend(120, [("X", [119], []), ("H", [0], []), ("CNOT", [0,1], []), ("Rz", [50], [PI/8])]))
+    print(engine_nnz())
+}

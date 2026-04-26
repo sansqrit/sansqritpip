@@ -4,7 +4,7 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
 NAME='sansqrit'
-VERSION='0.3.4'
+VERSION='0.3.6'
 DIST=ROOT/'dist'
 DIST.mkdir(exist_ok=True)
 for p in DIST.glob('*'): p.unlink()
@@ -19,11 +19,12 @@ def hash_file(data: bytes):
 metadata=f'''Metadata-Version: 2.3
 Name: {NAME}
 Version: {VERSION}
-Summary: Sansqrit quantum DSL by Karthik V with sparse/sharded lookup execution, hierarchical tensor shards, QEC, hardware exports, diagnostics, and packaged AI/ML training datasets.
+Summary: Sansqrit quantum DSL by Karthik V with adaptive planning, distributed clusters, QEC, GPU/cuQuantum adapters, QASM3, verification, and AI datasets.
 Author: Karthik V
 Maintainer: Karthik V
 License: MIT
 Requires-Python: >=3.10
+Requires-Dist: numpy>=1.26
 Keywords: quantum,dsl,simulator,sparse,sharding,lookup,stabilizer,qec,surface-code,tensor-network,hierarchical-tensor,mps,qasm,qiskit,braket,cirq,pennylane,education,research,ai-training
 Classifier: Development Status :: 3 - Alpha
 Classifier: Intended Audience :: Developers
@@ -46,7 +47,38 @@ Provides-Extra: cirq
 Provides-Extra: braket
 Provides-Extra: pennylane
 Provides-Extra: interop
+Provides-Extra: ray
+Provides-Extra: dask
+Provides-Extra: mpi
+Provides-Extra: cuquantum
 Provides-Extra: all
+Requires-Dist: pytest>=8; extra == "dev"
+Requires-Dist: build>=1; extra == "dev"
+Requires-Dist: twine>=5; extra == "dev"
+Requires-Dist: stim>=1.13; extra == "qec"
+Requires-Dist: pymatching>=2.1; extra == "qec"
+Requires-Dist: cupy-cuda12x>=13; extra == "gpu"
+Requires-Dist: qiskit>=1; extra == "qiskit"
+Requires-Dist: cirq-core>=1.4; extra == "cirq"
+Requires-Dist: amazon-braket-sdk>=1.80; extra == "braket"
+Requires-Dist: pennylane>=0.40; extra == "pennylane"
+Requires-Dist: qiskit>=1; extra == "interop"
+Requires-Dist: cirq-core>=1.4; extra == "interop"
+Requires-Dist: amazon-braket-sdk>=1.80; extra == "interop"
+Requires-Dist: pennylane>=0.40; extra == "interop"
+Requires-Dist: ray>=2; extra == "ray"
+Requires-Dist: dask[distributed]>=2024; extra == "dask"
+Requires-Dist: mpi4py>=4; extra == "mpi"
+Requires-Dist: cuquantum-python-cu12>=24; extra == "cuquantum"
+Requires-Dist: qiskit>=1; extra == "all"
+Requires-Dist: cirq-core>=1.4; extra == "all"
+Requires-Dist: amazon-braket-sdk>=1.80; extra == "all"
+Requires-Dist: pennylane>=0.40; extra == "all"
+Requires-Dist: stim>=1.13; extra == "all"
+Requires-Dist: pymatching>=2.1; extra == "all"
+Requires-Dist: ray>=2; extra == "all"
+Requires-Dist: dask[distributed]>=2024; extra == "all"
+Requires-Dist: mpi4py>=4; extra == "all"
 Description-Content-Type: text/markdown
 
 '''+(ROOT/'README.md').read_text(encoding='utf-8')

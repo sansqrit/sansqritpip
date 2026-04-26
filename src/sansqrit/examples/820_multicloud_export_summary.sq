@@ -1,0 +1,7 @@
+# Hardware target summary for IBM/Qiskit, AWS/Braket, Azure, Cirq, PennyLane, CUDA-Q and QEC tools
+simulate(2) {
+    q = quantum_register(2)
+    H(q[0]); CNOT(q[0], q[1])
+    print(hardware_payload_summary())
+    print(hardware_targets())
+}

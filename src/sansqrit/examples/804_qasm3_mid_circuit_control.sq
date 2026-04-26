@@ -1,0 +1,2 @@
+# OpenQASM 3 mid-circuit measurement and classical control template
+print(qasm3_mid_circuit_template(2))

@@ -1,0 +1,6 @@
+# Hardware-neutral OpenQASM 3 export payload for cloud submission
+simulate(3) {
+    q = quantum_register(3)
+    H(q[0]); CNOT(q[0], q[1]); Rz(q[2], PI/4)
+    print(export_hardware("azure"))
+}

@@ -1,0 +1,8 @@
+# 140-qubit sparse financial risk flags; planner should avoid dense simulation
+ops = [("X", [3], []), ("X", [77], []), ("H", [0], []), ("CNOT", [0,77], []), ("Rz", [139], [PI/16])]
+print(explain_backend(140, ops))
+simulate(140, engine="sharded", n_shards=16, workers=4) {
+    q = quantum_register(140)
+    X(q[3]); X(q[77]); H(q[0]); CNOT(q[0], q[77]); Rz(q[139], PI/16)
+    print(engine_nnz())
+}

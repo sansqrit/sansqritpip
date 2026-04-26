@@ -552,3 +552,69 @@ def real_world_scenario_sample(n: int = 3, domain: str | None = None):
 def export_real_world_scenarios(path: str, limit: int | None = None, domain: str | None = None):
     from .scenarios import export_scenarios
     return export_scenarios(path, limit=limit, domain=domain)
+
+# v0.3.6 advanced industry/runtime helpers ----------------------------------
+def explain_backend(n_qubits: int, operations=None):
+    from .planner import explain_backend_plan
+    return explain_backend_plan(n_qubits, operations or [])
+
+
+def planner_features(n_qubits: int, operations=None):
+    from .planner import analyze_features
+    return analyze_features(n_qubits, operations or []).to_dict()
+
+
+def distributed_capabilities():
+    from .cluster import distributed_capabilities as _dc
+    return _dc()
+
+
+def gpu_capabilities():
+    from .gpu import gpu_capabilities as _gc
+    return _gc()
+
+
+def gpu_memory_estimate(n_qubits: int):
+    from .gpu import estimate_gpu_statevector_memory
+    return estimate_gpu_statevector_memory(n_qubits)
+
+
+def cuquantum_recommendation(n_qubits: int, circuit_type: str = "auto"):
+    from .gpu import CuQuantumAdapter
+    return CuQuantumAdapter().recommendation(n_qubits, circuit_type)
+
+
+def qasm3_mid_circuit_template(n_qubits: int = 2):
+    from .qasm import qasm3_mid_circuit_template as _tmpl
+    return _tmpl(n_qubits)
+
+
+def qasm3_advanced(path: str | None = None):
+    from .qasm import export_qasm3_advanced
+    text = export_qasm3_advanced(current_engine().history, current_engine().n_qubits, include_measure=True,
+                                 pragmas=["sansqrit advanced qasm3 export"])
+    if path:
+        write_file(path, text)
+    return text
+
+
+def qec_stim_surface_task(distance: int = 3, rounds: int | None = None, p: float = 0.001):
+    from .qec import stim_surface_code_task
+    return stim_surface_code_task(distance, rounds, p)
+
+
+def qec_threshold_sweep(distances=None, physical_error_rates=None):
+    from .qec import qec_threshold_sweep_template
+    return qec_threshold_sweep_template(distances or (3,5,7), physical_error_rates or (0.001,0.003,0.01))
+
+
+def qec_logical_resource_estimate(logical_qubits: int, logical_depth: int, distance: int = 3, factories: int = 0):
+    from .qec import logical_resource_estimate
+    return logical_resource_estimate(logical_qubits, logical_depth, code_distance=distance, factories=factories)
+
+
+def conformance_report():
+    from .circuit import Circuit
+    from .verification import conformance_report as _report
+    e = current_engine()
+    return _report(Circuit(e.n_qubits, list(e.history)))

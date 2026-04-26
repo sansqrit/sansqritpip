@@ -1,0 +1,3 @@
+# 1000-qubit Clifford graph-state cybersecurity correlation screen
+ops = [("H", [0], []), ("CNOT", [0,1], []), ("CZ", [1,2], []), ("H", [999], [])]
+print(explain_backend(1000, ops))

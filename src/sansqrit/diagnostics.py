@@ -47,6 +47,10 @@ def backends() -> list[BackendAvailability]:
         BackendAvailability("pennylane", optional_available("pennylane"), "pip install 'sansqrit[pennylane]'", "PennyLane QNode/QML integration."),
         BackendAvailability("stim", optional_available("stim"), "pip install stim", "Optional fast stabilizer/QEC circuit checks."),
         BackendAvailability("pymatching", optional_available("pymatching"), "pip install pymatching", "Optional MWPM surface-code/repetition-code decoding."),
+        BackendAvailability("cuquantum", optional_available("cuquantum"), "install NVIDIA cuQuantum in CUDA environment", "Optional cuStateVec/cuTensorNet/cuDensityMat acceleration target."),
+        BackendAvailability("ray", optional_available("ray"), "pip install ray", "Optional cluster scheduler adapter."),
+        BackendAvailability("dask", optional_available("dask"), "pip install 'dask[distributed]'", "Optional distributed scheduler adapter."),
+        BackendAvailability("mpi4py", optional_available("mpi4py"), "pip install mpi4py", "Optional MPI adapter for HPC clusters."),
     ]
 
 

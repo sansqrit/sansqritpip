@@ -16195,3 +16195,60 @@ simulate(136, engine="mps", max_bond_dim=64, cutoff=1e-12, use_lookup=true) {
 }
 ```
 
+
+---
+
+# v0.3.6 Industry-Parity Additions by Karthik V
+
+Sansqrit v0.3.6 adds a stronger adaptive planner, production-oriented distributed sparse execution APIs, optional Stim/PyMatching QEC bridges, GPU/cuQuantum adapters, richer OpenQASM 3 support, and multi-framework verification.
+
+## Adaptive execution flow
+
+```mermaid
+flowchart TD
+    A[Sansqrit DSL / Python Circuit] --> B[Parser + Circuit History]
+    B --> C[Optimizer]
+    C --> D[Adaptive Planner]
+    D --> E{Circuit Structure}
+    E -->|Clifford-only| F[Stabilizer / Stim Path]
+    E -->|Few T/non-Clifford| G[Extended Stabilizer]
+    E -->|Sparse amplitudes| H[Sparse + Lookup]
+    E -->|Large sparse| I[Sharded / Distributed Sparse]
+    E -->|Independent <=10q components| J[Hierarchical Tensor Shards + Packaged Lookup]
+    E -->|Low entanglement| K[MPS / Tensor Network]
+    E -->|Small noisy| L[Density Matrix]
+    E -->|Small dense + CUDA| M[GPU / cuQuantum Adapter]
+    E -->|Hardware desired| N[QASM3 / Qiskit / Cirq / Braket / Azure / PennyLane Export]
+```
+
+## New CLI commands
+
+```bash
+sansqrit plan examples/001_bell_state.sq
+sansqrit plan examples/001_bell_state.sq --json
+sansqrit gpu --qubits 28 --type dense
+sansqrit distributed
+sansqrit qec-plan --mode threshold
+sansqrit qec-plan --mode resource --logical-qubits 100 --logical-depth 1000 --distance 5
+```
+
+## New DSL helpers
+
+```sansqrit
+print(explain_backend(120, [("H", [0], []), ("CNOT", [0, 1], [])]))
+print(planner_features(120, [("H", [0], []), ("CNOT", [0, 1], [])]))
+print(distributed_capabilities())
+print(gpu_capabilities())
+print(gpu_memory_estimate(28))
+print(cuquantum_recommendation(28, "dense"))
+print(qasm3_mid_circuit_template(2))
+print(qec_stim_surface_task(3, 3, 0.001))
+print(qec_threshold_sweep())
+print(qec_logical_resource_estimate(100, 1000, 5, 10))
+```
+
+## Important accuracy statement
+
+Sansqrit can represent and plan 120+ logical-qubit programs, but it does not claim arbitrary dense 120-qubit state-vector simulation. The planner chooses stabilizer, MPS, sparse, hierarchical, distributed, GPU, QEC, or hardware-export routes based on the circuit. Dense global simulation still scales as `2^n` amplitudes.
+
+See `docs/INDUSTRY_PARITY_V036.md` for the complete design details.

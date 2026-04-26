@@ -137,6 +137,51 @@ def cmd_scenarios(args: argparse.Namespace) -> int:
         raise SystemExit("scenarios command required")
     return 0
 
+
+def cmd_plan(args: argparse.Namespace) -> int:
+    import json
+    from .dsl import run_file
+    from .runtime import last_engine
+    from .planner import analyze_operations
+    run_file(args.file)
+    e = last_engine()
+    if e is None or not hasattr(e, "history"):
+        raise SystemExit("no circuit history found")
+    plan = analyze_operations(e.n_qubits, list(e.history), distributed_workers=args.distributed_workers, available_gpu=args.gpu)
+    if args.json:
+        print(json.dumps(plan.to_dict(), indent=2, sort_keys=True))
+    else:
+        print(plan.explain())
+    return 0
+
+
+def cmd_gpu(args: argparse.Namespace) -> int:
+    import json
+    from .gpu import gpu_capabilities, estimate_gpu_statevector_memory, CuQuantumAdapter
+    data = gpu_capabilities()
+    if args.qubits is not None:
+        data["memory"] = estimate_gpu_statevector_memory(args.qubits)
+        data["cuquantum_recommendation"] = CuQuantumAdapter().recommendation(args.qubits, args.type)
+    print(json.dumps(data, indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_distributed_info(args: argparse.Namespace) -> int:
+    import json
+    from .cluster import distributed_capabilities
+    print(json.dumps(distributed_capabilities(), indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_qec_plan(args: argparse.Namespace) -> int:
+    import json
+    from .qec import qec_threshold_sweep_template, logical_resource_estimate
+    if args.mode == "threshold":
+        print(json.dumps(qec_threshold_sweep_template(), indent=2, sort_keys=True))
+    else:
+        print(json.dumps(logical_resource_estimate(args.logical_qubits, args.logical_depth, code_distance=args.distance, factories=args.factories), indent=2, sort_keys=True))
+    return 0
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="sansqrit", description="Sansqrit quantum DSL")
     p.add_argument("--version", action="version", version=f"sansqrit {__version__}")
@@ -175,6 +220,29 @@ def build_parser() -> argparse.ArgumentParser:
     trouble.set_defaults(func=cmd_troubleshoot)
     hardware = sub.add_parser("hardware", help="list hardware export targets")
     hardware.set_defaults(func=cmd_hardware)
+
+    plan = sub.add_parser("plan", help="run a .sq file and explain the adaptive backend choice")
+    plan.add_argument("file")
+    plan.add_argument("--distributed-workers", type=int, default=0)
+    plan.add_argument("--gpu", action="store_true")
+    plan.add_argument("--json", action="store_true")
+    plan.set_defaults(func=cmd_plan)
+
+    gpu = sub.add_parser("gpu", help="show GPU/cuQuantum capability and memory estimates")
+    gpu.add_argument("--qubits", type=int)
+    gpu.add_argument("--type", default="auto", choices=["auto", "dense", "mps", "tensor", "density", "noise", "low_entanglement"])
+    gpu.set_defaults(func=cmd_gpu)
+
+    dist = sub.add_parser("distributed", help="show production distributed execution capabilities")
+    dist.set_defaults(func=cmd_distributed_info)
+
+    qecplan = sub.add_parser("qec-plan", help="print QEC threshold/resource planning helpers")
+    qecplan.add_argument("--mode", choices=["threshold", "resource"], default="resource")
+    qecplan.add_argument("--logical-qubits", type=int, default=100)
+    qecplan.add_argument("--logical-depth", type=int, default=1000)
+    qecplan.add_argument("--distance", type=int, default=3)
+    qecplan.add_argument("--factories", type=int, default=0)
+    qecplan.set_defaults(func=cmd_qec_plan)
 
     scenarios = sub.add_parser("scenarios", help="inspect/export the 500-record real-world Sansqrit scenario corpus")
     ssub = scenarios.add_subparsers(dest="scenario_command", required=True)

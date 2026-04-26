@@ -117,3 +117,66 @@ class CuPyStateVectorEngine:
     def export_qasm3(self, include_measure: bool = False) -> str:
         from .qasm import export_qasm3
         return export_qasm3(self.history, self.n_qubits, include_measure=include_measure)
+
+# ---------------------------------------------------------------------------
+# Deeper GPU / cuQuantum capability layer
+# ---------------------------------------------------------------------------
+def gpu_capabilities() -> dict:
+    """Return optional GPU/cuQuantum capabilities without importing heavy SDKs eagerly."""
+    import importlib.util
+    cupy_ok = importlib.util.find_spec("cupy") is not None
+    cuquantum_ok = importlib.util.find_spec("cuquantum") is not None
+    return {
+        "cupy": cupy_ok,
+        "cuquantum": cuquantum_ok,
+        "dense_statevector": cupy_ok,
+        "cuStateVec_target": cuquantum_ok,
+        "cuTensorNet_target": cuquantum_ok,
+        "cuDensityMat_target": cuquantum_ok,
+        "notes": "CuPy backend is executable when CuPy/CUDA is installed. cuQuantum fields expose adapter targets for production GPU deployments.",
+    }
+
+
+def estimate_gpu_statevector_memory(n_qubits: int, bytes_per_amplitude: int = 16, overhead: float = 1.25) -> dict:
+    if n_qubits < 0:
+        raise QuantumError("n_qubits must be non-negative")
+    if n_qubits > 62:
+        dense = f"2^{n_qubits} * {bytes_per_amplitude} bytes"
+        total = "exponential"
+    else:
+        dense_bytes = (1 << n_qubits) * bytes_per_amplitude
+        dense = dense_bytes
+        total = int(dense_bytes * overhead)
+    return {"n_qubits": n_qubits, "statevector_bytes": dense, "estimated_total_bytes": total, "overhead_factor": overhead}
+
+
+class CuQuantumAdapter:
+    """Lazy adapter for production cuQuantum integrations.
+
+    The package remains lightweight by not depending on cuQuantum. When installed,
+    this object tells users which accelerated targets can be used by an external
+    production runner: cuStateVec for dense state-vector, cuTensorNet for tensor
+    networks, and cuDensityMat for density-matrix simulation.
+    """
+    def __init__(self):
+        self.capabilities = gpu_capabilities()
+
+    @property
+    def available(self) -> bool:
+        return bool(self.capabilities.get("cuquantum"))
+
+    def require(self) -> None:
+        if not self.available:
+            raise QuantumError("cuQuantum is not installed. Install an appropriate NVIDIA cuQuantum Python package in a CUDA environment.")
+
+    def recommendation(self, n_qubits: int, circuit_type: str = "auto") -> dict:
+        caps = self.capabilities
+        if not caps.get("cuquantum"):
+            return {"available": False, "recommended": "install cuQuantum/CUDA or use sparse/MPS/stabilizer"}
+        if circuit_type in {"mps", "tensor", "low_entanglement"}:
+            target = "cuTensorNet"
+        elif circuit_type in {"density", "noise"}:
+            target = "cuDensityMat"
+        else:
+            target = "cuStateVec" if n_qubits <= 32 else "cuTensorNet"
+        return {"available": True, "recommended": target, "memory": estimate_gpu_statevector_memory(min(n_qubits, 62))}

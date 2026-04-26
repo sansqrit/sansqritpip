@@ -527,3 +527,95 @@ def syndrome_circuit_as_stim_text(logical: LogicalQubit, *, ancilla_base: int | 
         else:
             lines.append("# unsupported " + name + " " + " ".join(str(q) for q in qs))
     return "\n".join(lines) + ("\n" if lines else "")
+
+# ---------------------------------------------------------------------------
+# Production QEC integration adapters: Stim + PyMatching style workflows
+# ---------------------------------------------------------------------------
+def stim_surface_code_task(distance: int = 3, rounds: int | None = None, after_clifford_depolarization: float = 0.001) -> str:
+    """Return a Stim surface-code memory experiment circuit when Stim is present.
+
+    If Stim is not installed, a readable Stim-like fallback is returned. This is
+    intentionally a text bridge because real threshold studies should be run in
+    the user's Stim/PyMatching environment.
+    """
+    rounds = int(rounds or distance)
+    try:
+        import stim
+        circ = stim.Circuit.generated(
+            "surface_code:rotated_memory_z",
+            distance=int(distance),
+            rounds=rounds,
+            after_clifford_depolarization=float(after_clifford_depolarization),
+            before_round_data_depolarization=float(after_clifford_depolarization),
+            before_measure_flip_probability=float(after_clifford_depolarization),
+            after_reset_flip_probability=float(after_clifford_depolarization),
+        )
+        return str(circ)
+    except Exception:
+        lattice = SurfaceCodeLattice(distance)
+        lines = [f"# Stim-like rotated surface-code fallback distance={distance} rounds={rounds} p={after_clifford_depolarization}"]
+        for r in range(rounds):
+            lines.append(f"# round {r}")
+            for stab in lattice.stabilizers():
+                lines.append("# stabilizer " + stab)
+        lines.append("# Install stim for generated detector-error-model circuits.")
+        return "\n".join(lines) + "\n"
+
+
+@dataclass
+class DecodingReport:
+    decoder: str
+    available: bool
+    syndrome: tuple[int, ...]
+    corrections: list[tuple[str, int]]
+    notes: str
+
+
+def pymatching_decode_surface(code: StabilizerCode, syndrome: Sequence[int], *, matching: Any | None = None) -> DecodingReport:
+    """Decode a surface-code syndrome using PyMatching when possible.
+
+    A caller may pass an already-constructed ``pymatching.Matching`` object from
+    a detector error model. Without one, this uses the built-in fallback decoder.
+    """
+    bits = tuple(int(x) for x in syndrome)
+    dec = PyMatchingSurfaceDecoder(matching)
+    corrections = dec.decode(code, bits)
+    available = qec_optional_features().get("pymatching", False) and matching is not None
+    return DecodingReport("pymatching" if available else "surface_fallback", available, bits, corrections, "MWPM used only when a Matching graph is supplied; otherwise educational fallback.")
+
+
+def qec_threshold_sweep_template(distances: Sequence[int] = (3, 5, 7), physical_error_rates: Sequence[float] = (0.001, 0.003, 0.01)) -> list[dict[str, Any]]:
+    """Return a JSON-safe threshold-sweep plan for external Stim/PyMatching runs."""
+    out = []
+    for d in distances:
+        for p in physical_error_rates:
+            out.append({
+                "code": "rotated_surface_code",
+                "distance": int(d),
+                "rounds": int(d),
+                "physical_error_rate": float(p),
+                "stim_generator": "surface_code:rotated_memory_z",
+                "decoder": "PyMatching MWPM",
+                "status": "plan_only_inside_sansqrit; execute with sansqrit[qec] extras for production studies",
+            })
+    return out
+
+
+def logical_resource_estimate(algorithmic_logical_qubits: int, logical_depth: int, *, code_distance: int = 3, factories: int = 0) -> dict[str, int | str]:
+    """Small resource-estimation helper inspired by cloud resource estimators."""
+    if code_distance < 3 or code_distance % 2 == 0:
+        raise SansqritRuntimeError("code_distance must be odd and >=3")
+    physical_per_logical = 2 * code_distance * code_distance - 1
+    return {
+        "logical_qubits": int(algorithmic_logical_qubits),
+        "logical_depth": int(logical_depth),
+        "code_distance": int(code_distance),
+        "physical_per_logical_estimate": physical_per_logical,
+        "data_physical_qubits": int(algorithmic_logical_qubits) * physical_per_logical,
+        "factory_physical_qubits": int(factories) * physical_per_logical,
+        "total_physical_qubits": (int(algorithmic_logical_qubits) + int(factories)) * physical_per_logical,
+        "note": "rough planning estimate, not a hardware-calibrated resource-estimator result",
+    }
+
+# Extend exported names for static analyzers.
+__all__ += ["PyMatchingSurfaceDecoder", "stim_surface_code_task", "pymatching_decode_surface", "DecodingReport", "qec_threshold_sweep_template", "logical_resource_estimate"]

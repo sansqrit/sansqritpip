@@ -122,11 +122,16 @@ class MPSEngine:
             for pos in range(q0 + 1, q1):
                 self._swap_adjacent(pos)
         else:
-            for pos in range(q1, q0 - 1):
-                self._swap_adjacent(pos)
-            self._apply_two_matrix(q0, q1 + 1, matrix)
-            for pos in range(q0 - 1, q1 - 1, -1):
-                self._swap_adjacent(pos)
+            # Matrix helpers are defined in the caller order (q0, q1), but the
+            # MPS chain applies adjacent two-site gates in site order from left
+            # to right. For non-adjacent gates where q0 is to the right of q1,
+            # transform the 4x4 matrix into the swapped site order and reuse the
+            # q_left < q_right path. The previous recursive SWAP path used the
+            # wrong logical ordering for controls and produced incorrect states
+            # for gates such as CNOT(3, 0).
+            swap = np.array(matrix_4x4("SWAP"), dtype=np.complex128)
+            m = swap @ np.array(matrix, dtype=np.complex128) @ swap
+            self._apply_two_matrix(q1, q0, m.tolist())
 
     def apply(self, name: str, *qubits: int | QubitRef, params: Sequence[float] = ()) -> None:
         name = canonical_gate_name(name)
@@ -177,7 +182,8 @@ class MPSEngine:
         for basis in range(1 << self.n_qubits):
             assign = {q: (basis >> q) & 1 for q in range(self.n_qubits)}
             p = self._norm_with_projection(assign)
-            if p > self.cutoff:
+            threshold = max(self.cutoff, 1e-15)
+            if p > threshold:
                 out[format(basis, f"0{self.n_qubits}b")] = p
         return dict(sorted(out.items()))
 

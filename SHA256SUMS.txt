@@ -1,0 +1,1 @@
+becfb6d62a4ee097450f0ea86d078c428bd4ead361b57c57299e7f1e9dbfec37  dist/sansqrit-0.3.6-py3-none-any.whl

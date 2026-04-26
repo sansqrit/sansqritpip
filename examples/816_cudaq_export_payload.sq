@@ -1,0 +1,6 @@
+# CUDA-Q/cuQuantum-oriented OpenQASM 3 fallback payload
+simulate(4) {
+    q = quantum_register(4)
+    H(q[0]); CNOT(q[0], q[1]); CNOT(q[2], q[3])
+    print(export_hardware("cudaq"))
+}

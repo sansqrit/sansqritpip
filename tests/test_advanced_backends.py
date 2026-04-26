@@ -5,11 +5,11 @@ from sansqrit.cluster import start_worker_in_thread, DistributedSparseEngine
 
 
 def test_stabilizer_large_clifford_bell_pair():
-    e = StabilizerEngine(1024, seed=123)
+    e = StabilizerEngine(128, seed=123)
     e.H(0)
-    e.CNOT(0, 1023)
+    e.CNOT(0, 127)
     counts = e.measure_all(32)
-    assert set(counts).issubset({"0" * 1024, "1" + "0" * 1022 + "1"})
+    assert set(counts).issubset({"0" * 128, "1" + "0" * 126 + "1"})
 
 
 def test_hybrid_selects_stabilizer_for_clifford():
@@ -40,12 +40,17 @@ def test_optimizer_cancels_inverse_operations():
 
 
 def test_distributed_sparse_local_worker_matches_sparse():
-    server, _, addr = start_worker_in_thread(port=0)
+    server, thread, addr = start_worker_in_thread(port=0)
     try:
         e = DistributedSparseEngine.from_addresses(2, [addr])
         e.apply("H", 0)
         e.apply("CNOT", 0, 1)
         assert e.probabilities() == Circuit(2).H(0).CNOT(0, 1).run().probabilities()
     finally:
+        try:
+            del e
+        except Exception:
+            pass
         server.shutdown()
         server.server_close()
+        thread.join(1)

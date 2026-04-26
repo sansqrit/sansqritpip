@@ -1,0 +1,4 @@
+# 160 qubits as independent <=10q components, suitable for hierarchical lookup shards
+ops = [("H", [0], []), ("CNOT", [0,1], []), ("H", [20], []), ("CNOT", [20,21], []), ("X", [150], [])]
+print(planner_features(160, ops))
+print(explain_backend(160, ops))

@@ -1,0 +1,4 @@
+# Surface-code decoder and threshold planning metadata
+code = qec_code("surface", 3)
+print(code)
+print(qec_threshold_sweep([3,5], [0.001, 0.005]))

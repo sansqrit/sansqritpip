@@ -166,3 +166,44 @@ class LookupTable:
 
 
 DEFAULT_LOOKUP = LookupTable.standard()
+
+# Avoid slow interpreter finalization after a process has materialized the large
+# embedded <=10q lookup dictionary. The cache is valuable during execution, but
+# should be released explicitly during normal interpreter shutdown.
+def clear_lookup_caches() -> None:
+    _load_embedded_single.cache_clear()
+    _load_packaged_single_matrices.cache_clear()
+    _load_packaged_two_matrices.cache_clear()
+    packaged_metadata.cache_clear()
+
+try:  # pragma: no cover - process-shutdown hygiene
+    import atexit
+    atexit.register(clear_lookup_caches)
+except Exception:
+    pass
+
+# v0.3.6 key-scoped embedded lookup override.  The original all-table loader is
+# kept for compatibility but the public facade now uses a key cache, preventing
+# huge process-shutdown delays after a single small lookup.
+@lru_cache(maxsize=256)
+def _load_embedded_single_key(key: str) -> list[list[tuple[int, complex]]]:
+    raw = gzip.decompress(_resource_bytes("lookup_embedded_single_upto_10.json.gz"))
+    payload = json.loads(raw.decode("utf-8"))
+    rows = payload[key]
+    return [[(int(dst), _decode_complex(coeff)) for dst, coeff in pairs] for pairs in rows]
+
+
+def _lt_has_embedded_single(self: LookupTable, n_qubits: int, qubit: int, name: str) -> bool:
+    name = canonical_gate_name(name)
+    return 1 <= int(n_qubits) <= int(self.max_embedded_qubits) and 0 <= int(qubit) < int(n_qubits) and name in self.matrices
+
+
+def _lt_embedded_single_transition(self: LookupTable, n_qubits: int, qubit: int, name: str) -> list[list[tuple[int, complex]]]:
+    key = f"{int(n_qubits)}:{int(qubit)}:{canonical_gate_name(name)}"
+    try:
+        return _load_embedded_single_key(key)
+    except Exception as exc:
+        raise KeyError(f"no embedded lookup table for {key}") from exc
+
+LookupTable.has_embedded_single = _lt_has_embedded_single  # type: ignore[method-assign]
+LookupTable.embedded_single_transition = _lt_embedded_single_transition  # type: ignore[method-assign]

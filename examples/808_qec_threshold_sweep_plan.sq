@@ -1,0 +1,2 @@
+# QEC threshold sweep plan for external Stim/PyMatching runs
+print(qec_threshold_sweep())

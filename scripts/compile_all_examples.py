@@ -1,13 +1,15 @@
 from pathlib import Path
 from sansqrit.dsl import translate
+import os, sys
 bad = []
-for p in sorted(Path('examples').glob('*.sq')):
+files = sorted(Path('examples').glob('*.sq'))
+for p in files:
     try:
         py = translate(p.read_text(), filename=str(p))
         compile(py, str(p), 'exec')
     except Exception as exc:
         bad.append((p, exc))
-print('examples', len(list(Path('examples').glob('*.sq'))), 'bad', len(bad))
+print('examples', len(files), 'bad', len(bad), flush=True)
 for p, exc in bad:
-    print(p, exc)
-raise SystemExit(1 if bad else 0)
+    print(p, exc, flush=True)
+os._exit(1 if bad else 0)

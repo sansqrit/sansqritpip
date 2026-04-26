@@ -1,0 +1,4 @@
+# GPU and cuQuantum capability planning for a 28-qubit dense subproblem
+print(gpu_capabilities())
+print(gpu_memory_estimate(28))
+print(cuquantum_recommendation(28, "dense"))

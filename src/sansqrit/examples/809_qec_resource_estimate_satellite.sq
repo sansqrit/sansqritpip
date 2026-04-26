@@ -1,0 +1,2 @@
+# Rough logical-to-physical estimate for a satellite QEC link
+print(qec_logical_resource_estimate(128, 50000, 5, 12))

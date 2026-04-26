@@ -33,6 +33,13 @@ class Circuit:
         if optimize:
             from .optimizer import optimize_operations
             ops, _ = optimize_operations(ops)
+        if backend in {"auto", "automatic"}:
+            from .planner import analyze_operations, enforce_backend_selection
+            plan = analyze_operations(self.n_qubits, ops, distributed_workers=len(backend_options.get("addresses") or []))
+            enforce_backend_selection(plan)
+            selected = {"statevector": "sparse", "sparse_sharded": "sharded", "extended_stabilizer": "stabilizer"}.get(plan.backend, plan.backend)
+            backend_options.setdefault("_auto_plan", plan.to_dict())
+            backend = selected
         engine = QuantumEngine.create(self.n_qubits, backend=backend, seed=seed, **backend_options)
         for op in ops:
             engine.apply(op.name, *op.qubits, params=op.params)

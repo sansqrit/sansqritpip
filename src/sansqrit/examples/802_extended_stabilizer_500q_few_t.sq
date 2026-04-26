@@ -1,0 +1,2 @@
+# Mostly Clifford 500-qubit city graph with two non-Clifford feature injections
+print(explain_backend(500, [("H", [0], []), ("CNOT", [0,1], []), ("T", [10], []), ("Tdg", [20], [])]))

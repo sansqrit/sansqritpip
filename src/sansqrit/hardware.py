@@ -34,6 +34,10 @@ TARGETS = {
     "pennylane": HardwareTarget("pennylane", ("callable quantum function",), "PennyLane QNode/QML workflows; device selected by the user.", "pip install 'sansqrit[pennylane]'"),
     "openqasm2": HardwareTarget("openqasm2", ("text",), "Portable OpenQASM 2 text.", "built in"),
     "openqasm3": HardwareTarget("openqasm3", ("text",), "Portable OpenQASM 3 text.", "built in"),
+    "qir": HardwareTarget("qir", ("planned LLVM/QIR bridge",), "QIR integration point for Azure/Microsoft-style tooling; emits planning metadata now.", "install qdk/qir tooling externally"),
+    "cudaq": HardwareTarget("cudaq", ("openqasm3", "planned CUDA-Q kernel bridge"), "NVIDIA CUDA-Q/cuQuantum production acceleration path.", "install cuda-quantum/cuQuantum externally"),
+    "stim": HardwareTarget("stim", ("stim text",), "Fast stabilizer/QEC simulation target for Clifford/QEC circuits.", "pip install 'sansqrit[qec]'"),
+    "pymatching": HardwareTarget("pymatching", ("syndrome graph decoder",), "MWPM QEC decoder target for surface-code-like syndromes.", "pip install 'sansqrit[qec]'"),
 }
 
 
@@ -58,8 +62,13 @@ def export_for_hardware(circuit_or_engine: Any, provider: str, *, include_measur
     circ = _as_circuit(circuit_or_engine)
     if provider_key == "openqasm2":
         return export_qasm2(circ.operations, circ.n_qubits, include_measure=include_measure)
-    if provider_key in {"openqasm3", "azure"}:
+    if provider_key in {"openqasm3", "azure", "cudaq"}:
         return {"provider": provider_key, "format": "openqasm3", "shots_parameter": "provider-specific", "qasm": export_qasm3(circ.operations, circ.n_qubits, include_measure=include_measure), "notes": TARGETS.get(provider_key, TARGETS["openqasm3"]).notes}
+    if provider_key == "qir":
+        return {"provider": "qir", "format": "planning-metadata", "n_qubits": circ.n_qubits, "operations": len(circ.operations), "note": "Use QIR/QDK bridge externally; Sansqrit keeps OpenQASM 3 as the portable interchange."}
+    if provider_key == "stim":
+        from .verification import verify_with_stim
+        return {"provider": "stim", "verification": verify_with_stim(circ).__dict__}
     if provider_key in {"qiskit", "ibm"}:
         try:
             return to_qiskit(circ)
@@ -76,10 +85,13 @@ def export_for_hardware(circuit_or_engine: Any, provider: str, *, include_measur
         except Exception:
             return {"provider": provider_key, "format": "openqasm3", "qasm": export_qasm3(circ.operations, circ.n_qubits, include_measure=include_measure), "install_hint": TARGETS["braket"].install_hint}
     if provider_key == "pennylane":
-        return apply_to_pennylane(circ)
+        try:
+            return apply_to_pennylane(circ)
+        except Exception:
+            return {"provider": provider_key, "format": "openqasm3", "qasm": export_qasm3(circ.operations, circ.n_qubits, include_measure=include_measure), "install_hint": TARGETS["pennylane"].install_hint}
     raise QuantumError(f"unknown hardware provider {provider!r}; known: {sorted(TARGETS)}")
 
 
 def hardware_payload_summary(circuit_or_engine: Any) -> dict[str, Any]:
     circ = _as_circuit(circuit_or_engine)
-    return {"n_qubits": circ.n_qubits, "n_operations": len(circ.operations), "recommended_export_order": ["qiskit", "openqasm3", "braket", "cirq", "pennylane"], "targets": hardware_targets()}
+    return {"n_qubits": circ.n_qubits, "n_operations": len(circ.operations), "recommended_export_order": ["qiskit", "openqasm3", "braket", "cirq", "pennylane", "azure", "cudaq", "stim"], "targets": hardware_targets()}

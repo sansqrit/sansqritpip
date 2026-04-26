@@ -1,0 +1,2 @@
+[console_scripts]
+sansqrit = sansqrit.cli:main

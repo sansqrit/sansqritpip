@@ -1,0 +1,6 @@
+# Packaged lookup tables for <=10q component execution
+simulate(10, engine="sparse", use_lookup=true) {
+    q = quantum_register(10)
+    H(q[0]); X(q[9]); SX(q[5]); CNOT(q[0], q[1])
+    print(lookup_profile())
+}

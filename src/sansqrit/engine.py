@@ -72,6 +72,11 @@ class QuantumEngine:
         - hierarchical/tensor-shards: 10-qubit dense local blocks with MPS bridge promotion.
         """
         backend = backend or "sparse"
+        if backend in {"auto", "automatic"}:
+            # A live DSL simulate block cannot know future gates in advance.
+            # Use sparse/sharded-safe execution and expose planner functions for
+            # pre-built Circuit objects.
+            backend = "sharded" if n_qubits >= 40 else "sparse"
         if backend in {"stabilizer", "clifford"}:
             from .stabilizer import StabilizerEngine
             return StabilizerEngine(n_qubits, seed=seed)

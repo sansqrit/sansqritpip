@@ -1,0 +1,2 @@
+# Distributed sparse cluster feature discovery
+print(distributed_capabilities())

@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sansqrit"
-version = "0.3.4"
-description = "Sansqrit quantum DSL by Karthik V with sparse/sharded lookup execution, hierarchical tensor shards, QEC, hardware exports, diagnostics, and packaged AI/ML training datasets."
+version = "0.3.6"
+description = "Sansqrit quantum DSL by Karthik V with adaptive auto-planning, sparse/sharded lookup execution, hierarchical tensor shards, distributed clusters, QEC, GPU/cuQuantum adapters, OpenQASM 3, hardware exports, verification, and AI/ML datasets."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
@@ -30,9 +30,13 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Physics",
   "Topic :: Software Development :: Interpreters",
 ]
-dependencies = []
+dependencies = ["numpy>=1.26"]
 
 [project.optional-dependencies]
+ray = ["ray>=2"]
+dask = ["dask[distributed]>=2024"]
+mpi = ["mpi4py>=4"]
+cuquantum = ["cuquantum-python-cu12>=24"]
 dev = ["pytest>=8", "build>=1", "twine>=5"]
 qec = ["stim>=1.13", "pymatching>=2.1"]
 tensor = ["numpy>=1.26"]
@@ -42,13 +46,13 @@ cirq = ["cirq-core>=1.4"]
 braket = ["amazon-braket-sdk>=1.80"]
 pennylane = ["pennylane>=0.40"]
 interop = ["qiskit>=1", "cirq-core>=1.4", "amazon-braket-sdk>=1.80", "pennylane>=0.40"]
-all = ["numpy>=1.26", "qiskit>=1", "cirq-core>=1.4", "amazon-braket-sdk>=1.80", "pennylane>=0.40", "stim>=1.13", "pymatching>=2.1"]
+all = ["numpy>=1.26", "qiskit>=1", "cirq-core>=1.4", "amazon-braket-sdk>=1.80", "pennylane>=0.40", "stim>=1.13", "pymatching>=2.1", "ray>=2", "dask[distributed]>=2024", "mpi4py>=4"]
 
 [project.urls]
 Homepage = "https://pypi.org/project/sansqrit/"
-Documentation = "https://example.com/sansqrit/docs"
-Repository = "https://example.com/sansqrit/repo"
-Issues = "https://example.com/sansqrit/issues"
+Documentation = "https://pypi.org/project/sansqrit/"
+Repository = "https://pypi.org/project/sansqrit/"
+Issues = "https://pypi.org/project/sansqrit/"
 
 [project.scripts]
 sansqrit = "sansqrit.cli:main"

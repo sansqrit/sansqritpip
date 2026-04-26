@@ -1,0 +1,3 @@
+# 124-qubit low-entanglement molecular feature map planning
+ops = [("Ry", [i], [0.01 * i]) for i in range(0, 12)]
+print(explain_backend(124, ops))

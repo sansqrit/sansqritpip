@@ -1,0 +1,2 @@
+# Stim-style surface-code task; uses real Stim generator if installed, fallback text otherwise
+print(qec_stim_surface_task(3, 3, 0.001))
