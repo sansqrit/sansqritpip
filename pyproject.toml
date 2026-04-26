@@ -44,10 +44,10 @@ interop = ["qiskit>=1", "cirq-core>=1.4", "amazon-braket-sdk>=1.80", "pennylane>
 all = ["numpy>=1.26", "qiskit>=1", "cirq-core>=1.4", "amazon-braket-sdk>=1.80", "pennylane>=0.40"]
 
 [project.urls]
-Homepage = "https://example.com/sansqrit"
-Documentation = "https://example.com/sansqrit/docs"
-Repository = "https://example.com/sansqrit/repo"
-Issues = "https://example.com/sansqrit/issues"
+Homepage = "https://sansqrit.com"
+Documentation = "https://github.com/sansqrit/sansqritpip"
+Repository = "https://github.com/sansqrit/sansqritpip"
+Issues = "https://github.com/sansqrit/sansqritpip"
 
 [project.scripts]
 sansqrit = "sansqrit.cli:main"
